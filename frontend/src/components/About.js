@@ -10,12 +10,14 @@ export const About = () => {
         type: pruebaTypes.pruebaOn
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = ( e ) => {
+
         e.preventdefault();
-        fetch('localhost://8000/api/singIn/', {
+        fetch( 'localhost://8000/api/singIn/', {
             method: 'POST'
-        })
-    }
+        });
+
+    };
 
     return (
         <div>
