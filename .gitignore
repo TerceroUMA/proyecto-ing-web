@@ -1,2 +1,7 @@
 frontend/node_modules
 frontend/build
+*.log
+*.pot
+*.pyc
+
+backend/proyectoWeb/proyectoWeb/__pycache__/
