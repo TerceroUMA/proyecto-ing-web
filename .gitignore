@@ -5,3 +5,5 @@ frontend/build
 *.pyc
 
 backend/proyectoWeb/proyectoWeb/__pycache__/
+
+.DS_Store
