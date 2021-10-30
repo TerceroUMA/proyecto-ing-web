@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "617c9674b1e8d6980c2c7534"
+  },
+  "conductor": {
+    "$oid": "617bf034469c9cdb1982a39c"
+  },
+  "destino": "Sevilla",
+  "origen": "Málaga",
+  "tipoDeVehiculo": "Renault Clio",
+  "duracion": "7 horas y 13 minutos",
+  "horaDeSalida": "17:00",
+  "fechaDeSalida": "5/11/2022",
+  "periodicidad": "7 días",
+  "pasajeros": [
+    {
+      "$oid": "617c95d6b1e8d6980c2c752e"
+    },
+    {
+      "$oid": "617c95d6b1e8d6980c2c752f"
+    },
+    {
+      "$oid": "617c95d6b1e8d6980c2c7530"
+    },
+    {
+      "$oid": "617c95d6b1e8d6980c2c7531"
+    }
+  ],
+  "precio": 100,
+  "plazasDisponibles": 0
+},{
+  "_id": {
+    "$oid": "617c9805b1e8d6980c2c753d"
+  },
+  "conductor": {
+    "$oid": "617c95d6b1e8d6980c2c752e"
+  },
+  "destino": "Cádiz",
+  "origen": "Huelva",
+  "tipoDeVehiculo": "Tesla Model 3",
+  "duracion": "4 horas y 10 minutos",
+  "horaDeSalida": "19:00",
+  "fechaDeSalida": "6/11/2022",
+  "periodicidad": "7 días",
+  "pasajeros": [
+    {
+      "$oid": "617c95d6b1e8d6980c2c7531"
+    }
+  ],
+  "precio": 125,
+  "plazasDisponibles": 3
+}]
