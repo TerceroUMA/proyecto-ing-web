@@ -1,13 +1,26 @@
 from django.views import View
 from django.http.response import JsonResponse
+import pymongo
+from pymongo import MongoClient
+import json
+import certifi
 
 # Create your views here.
-
-
 class UsersList(View):
     def get(self, request):
         # False indica que devolveremos un array de json y no un unico json
-        return JsonResponse(['a', 'b', 'c'], safe=False)
+        #return JsonResponse(['a', 'b', 'c'], safe=False)
+
+
+
+        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+
+        db = client['IngWeb']
+        usuarios = db.users
+        users = list(usuarios.find({}, {"_id": 0}))
+        return JsonResponse(users, safe=False)
+        
+
 
     def post(self, request):
         dict = {
