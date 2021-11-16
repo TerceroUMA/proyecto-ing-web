@@ -6,10 +6,10 @@ import { store } from './store/store';
 
 export default function App() {
 
-    return (
-        <Provider store={ store }>
-            <AppRouter />
-        </Provider>
-    );
+  return (
+    <Provider store={ store }>
+      <AppRouter />
+    </Provider>
+  );
 
 }
