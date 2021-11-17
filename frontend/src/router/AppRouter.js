@@ -1,36 +1,39 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Link, Route } from 'react-router-dom';
-import { About } from '../components/About';
+import { useSelector } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../components/Home';
+import Navbar from '../components/Navbar';
+import IniciarSesion from '../pages/IniciarSesion';
+import Registrarse from '../pages/Registrarse';
 
 export const AppRouter = () => {
 
-    return (
-        <Router>
-            <div>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/about">About</Link>
-                        </li>
-                    </ul>
-                </nav>
+  const auth = useSelector( state => state.auth );
 
-                {/* A <Switch> looks through its children <Route>s and
+  console.log( auth.uuid );
+
+  return (
+    <Router>
+      <div>
+        <Navbar />
+
+        {/* A <Switch> looks through its children <Route>s and
                 renders the first one that matches the current URL. */}
-                <Switch>
-                    <Route path="/about">
-                        <About />
-                    </Route>
-                    <Route path="/">
-                        <Home />
-                    </Route>
-                </Switch>
-            </div>
-        </Router>
-    );
+
+        {/* TODO: Cambiar a rutas privadas */}
+        <Switch>
+          <Route path="/iniciarSesion">
+            <IniciarSesion />
+          </Route>
+          <Route path="/registrarse">
+            <Registrarse />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
 
 };

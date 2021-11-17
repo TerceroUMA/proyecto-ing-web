@@ -1,0 +1,14 @@
+:root {
+
+  /* colores */
+  --dark-blue: rgb(10, 20, 163);
+
+  /* Tamaños */
+  --navbar-height: 56px;
+
+}
+
+* {
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0px;
+}
