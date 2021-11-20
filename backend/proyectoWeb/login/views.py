@@ -8,9 +8,41 @@ import uuid
 
 # Create your views here.
 
+class Login(View):
+    
+    def __init__(self):
+        client = MongoClient(
+        'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
-class UsersList(View):
-    # Devuelve todos los datos de un usuario (Iniciar Sesión)
+        db = client['IngWeb']
+        self.users = db.users
+        
+    
+   
+
+    def get(self, request):
+        
+        # Inicio de Sesión
+
+        us = self.users.find_one({"correo": request.GET.get("correo")})
+        
+        if (us == None):
+            return JsonResponse({"ok": "false", "msg":'No se encuentra a ningún usuario con ese correo'}, safe=False)
+            
+        else:
+        
+            if(us["password"] != request.GET.get("password")):
+                return JsonResponse({"ok": "false", "msg":'El password introducido no coincide con el del usuario'}, safe=False)
+            
+            else:
+                return JsonResponse({"ok": "true", "usuario":us}, safe=False)
+        
+        
+        
+
+
+class Users(View):
+    
 
     def __init__(self):
         client = MongoClient(
@@ -23,12 +55,16 @@ class UsersList(View):
    
 
     def get(self, request):
-        # False indica que devolveremos un array de json y no un unico json
-        # return JsonResponse(['a', 'b', 'c'], safe=False)
+        # Devuelve todos los datos de un usuario 
 
-        us = self.users.find_one({"email": request.GET.get(
-            "email"), "password": request.GET.get("password")}, {"_id": 0, "password": 0})
-        return JsonResponse(us, safe=False)
+        try:
+            us = self.users.find_one({"uuid": request.GET.get("uuid")})
+            return JsonResponse({"ok": "true", "usuario":us}, safe=False)
+        
+        except:
+            return JsonResponse({"ok": "false", "msg":'No se encuentra a ningún usuario con ese id'}, safe=False)
+            
+            
 
     # Inserta un usuario en la base de datos (Registrarse)
 
@@ -51,6 +87,12 @@ class UsersList(View):
 
     # Borra al usuario que coincida con el id proporcionado.
     def delete(self, request):
-        us = {"email": "patata@gmail.com", "password": "v"}
-        self.users.delete_one(us)
-        return JsonResponse({"ok": "true"})
+        
+        try:
+            us = {"uuid": request.body.get["uuid"]}
+            
+            self.users.delete_one(us)
+            return JsonResponse({"ok": "true"})
+        
+        except:
+                return JsonResponse({"ok": "false", "msg":'No se ha encontrado un usuario con ese id'}, safe=False)
