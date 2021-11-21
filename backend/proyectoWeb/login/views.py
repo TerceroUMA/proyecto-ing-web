@@ -1,4 +1,5 @@
 from django.views import View
+from django.http import QueryDict
 from django.http.response import HttpResponse, JsonResponse
 import pymongo
 from pymongo import MongoClient
@@ -86,7 +87,7 @@ class Users(View):
 
     # Actualiza los datos del usuario que coincida con el id proporcionado.
     def put(self, request):
-        
+        print(request.PUT.get("correo"))
         filter = {'email' : request.PUT.get("email")}
         newvalues = {"$set": {'nombre': request.PUT.get("nombre"), 'apellidos': request.PUT.get("apellidos"), 'password': request.PUT.get("password"), 'edad': request.PUT.get("edad"), 'email': request.PUT.get("email"), 'telefono': request.PUT.get("telefono"), 'localidad': request.PUT.get("localidad")}}
         self.users.update_one(filter, newvalues)
@@ -94,7 +95,8 @@ class Users(View):
 
     # Borra al usuario que coincida con el id proporcionado.
     def delete(self, request):
-        us = self.users.find_one({"uuid": request.POST.get("uuid")}, {"_id": 0})
+        data = QueryDict(request.body)
+        us = self.users.find_one({"uuid": data["uuid"]}, {"_id": 0})
         if us == None:
             return JsonResponse({"ok": "false", "msg":'No se ha encontrado un usuario con ese id'}, safe=False)
             
