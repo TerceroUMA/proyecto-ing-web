@@ -2,3 +2,4 @@ django
 django_heroku
 pymongo
 dnspython pymongo certifi
+bcrypt
