@@ -7,6 +7,8 @@ import json
 import certifi
 import uuid
 
+from pymongo.message import update
+
 # Create your views here.
 class Trayectos(View):
     def __init__(self):
@@ -69,8 +71,28 @@ class Trayectos(View):
 
     #Actualiza los datos del trayecto que coincida con el id proporcionado.
     def put(self, request):
-        
-        return JsonResponse()
+        data = QueryDict(request.body)
+        filter = {'uuid': data["uuid"]}
+
+        if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
+            return JsonResponse({"ok": "false", "msg": 'No se ha encontrado un usuario con ese id'}, safe=False) 
+                   
+        newvalues = {"$set": {
+                       "origen": data["origen"],
+                        "destino": data["destino"],
+                        "tipoDeVehiculo": data["tipoDeVehiculo"],
+                        "conductor": self.usuarios.find_one({"uuid": data["conductor"]}, {"_id": 0}),  
+                        "duracion": data["duracion"],
+                        "precio": data["precio"],
+                        "plazasDisponible": data["plazasDisponibles"],
+                        "fechaDeSalida": data["fechaDeSalida"],
+                        "horaDeSalida": data["horaDeSalida"],
+                        "periodicidad": data["preriodicidad"]
+                        }
+                    }
+        self.trayectos.update_one(filter, newvalues)
+        return JsonResponse({"ok": "true"})
+
 
     #Borra el trayecto que coincida con el id proporcionado.
     def delete(self, request):
@@ -136,12 +158,13 @@ class Inscripcion(View):
     def post(self, request):
         data = QueryDict(request.body)
         tr = self.trayectos.fin_one({"uuid" : data["uuid"]})
+        filtro = {"uuid" : data["uuid"]}
 
         if tr == None:
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe = False)
 
-        self.trayectos.update_one(tr, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] - 1}})
-        self.trayectos.update_one(tr, {"$ set": {"pasajeros": tr["pasajeros"].append(data["idUsuario"])}})
+        self.trayectos.update_one(filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] - 1}})
+        self.trayectos.update_one(filtro, {"$ set": {"pasajeros": tr["pasajeros"].append(data["idUsuario"])}})
 
         return JsonResponse({"ok" : "true", "pasajeros": tr["pasajeros"]}, safe = False)
 
@@ -156,11 +179,12 @@ class Desinscripcion(View):
     def post (self, request):
         data = QueryDict(request.body)
         tr = self.trayectos.find_one({"uuid" : data["uuid"]})
+        filtro = {"uuid" : data["uuid"]}
 
         if tr == None:
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe = False)
 
-        self.trayectos.update_one(tr, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] + 1}})
-        self.trayectos.update_one(tr, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
+        self.trayectos.update_one(filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] + 1}})
+        self.trayectos.update_one(filtro, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
 
         return JsonResponse({"ok" : "true", "pasajeros" : tr["pasajeros"]}, safe = False)
