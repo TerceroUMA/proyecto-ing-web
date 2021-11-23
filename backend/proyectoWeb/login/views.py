@@ -50,14 +50,40 @@ class Users(View):
         self.users = db.users
 
     def get(self, request):
+        
         # Devuelve todos los datos de un usuario
+        if(request.GET.get("localidad") == None and request.GET.get("correo") == None):
+            
+            us = self.users.find_one({"uuid": request.GET.get("uuid")}, {"_id": 0, "password": 0})
+            if us == None:
 
-        us = self.users.find_one({"uuid": request.GET.get("uuid")}, {"_id": 0, "password": 0})
-        if us == None:
+                return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
 
-            return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+            return JsonResponse({"ok": "true", "usuario": us}, safe=False)
+            
+        
+        # Consulta parametrizada por email
+        elif (request.GET.get("correo") != None):
+            lista = []
+            for u in self.users.find({}, {"_id": 0, "password": 0}):
+                if(request.GET.get("correo").find(u["correo"]) >= 0 and request.GET.get("uuid") != u["uuid"]):
+                    lista.append(u)
 
-        return JsonResponse({"ok": "true", "usuario": us}, safe=False)
+            return JsonResponse({"ok": "true", "usuarios": lista}, safe=False)
+
+        
+        # Consulta parametrizada por localidad
+        else:
+            lista = []
+            for u in self.users.find({}, {"_id": 0, "password": 0}):
+                if(request.GET.get("localidad").find(u["localidad"]) >= 0 and request.GET.get("uuid") != u["uuid"]):
+                    lista.append(u)
+
+            return JsonResponse({"ok": "true", "usuarios": lista}, safe=False)
+
+            
+            
+            
 
     def comprobarCaracteres(self, dato):
         if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
