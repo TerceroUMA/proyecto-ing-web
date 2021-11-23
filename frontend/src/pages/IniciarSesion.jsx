@@ -30,37 +30,6 @@ const IniciarSesion = () => {
 
     dispatch( iniciarSesion( nombre, password, sendToHome ) );
 
-    /* const respuesta = await fetchSinToken( 'auth', { nombre, password }, 'POST' );
-
-    const data = await respuesta.json();
-
-    if ( data.ok ) {
-
-      Swal.fire({
-        title: 'Bienvenido',
-        text: data.msg,
-        icon: 'success',
-        willClose: () => {
-
-          sendToHome();
-
-        }
-      });
-
-    } else {
-
-      if ( data.msg ) {
-
-        Swal.fire( 'Error', data.msg, 'error' );
-
-      } else {
-
-        Swal.fire( 'Error', data.errorsArray[0], 'error' );
-
-      }
-
-    } */
-
   };
 
   return (
@@ -80,7 +49,7 @@ const IniciarSesion = () => {
           name="nombre"
           value={ nombre }
           onChange={ handleInputChange}
-          placeholder="Nombre de usuario"
+          placeholder="Correo electrónico"
         />
         <input
           className="sigIn__option form-control"

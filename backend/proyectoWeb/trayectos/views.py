@@ -1,94 +1,139 @@
-from datetime import _date, date, datetime, time
+from datetime import datetime, date
 from django.views import View
 from django.http import QueryDict
-from django.http.response import HttpResponse, JsonResponse
-import pymongo
+from django.http.response import JsonResponse
 from pymongo import MongoClient
-import json
 import certifi
 import uuid
 
-from pymongo.message import update
-
 # Create your views here.
+
+
 class Trayectos(View):
     def __init__(self):
-        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
         db = client['IngWeb']
         self.trayectos = db.trayectos
         self.usuarios = db.users
 
-    #Devuelve el listado completo de trayectos. Si no hay plazas disponibles no se devuelve el trayecto.
+    # Devuelve el listado completo de trayectos. Si no hay plazas disponibles no se devuelve el trayecto.
 
-    #Devuelve todos los datos del trayecto que coincida con el id proporcionado.
-    def comprobaciones(self, data, metodo):
+    # Devuelve todos los datos del trayecto que coincida con el id proporcionado.
 
-        duracion = data["duracion"]
-        if(duracion <= 0):
-            return JsonResponse({"ok:": "false", "msg": 'El formato de la duración  no es válido'}, safe = False)
-        
-        precio = data["precio"]
-        if(precio <= 0):
-            return JsonResponse({"ok:": "false", "msg": 'El formato del precio no es válido'}, safe = False)
-        
-        plazasDisponibles = data["plazasDisponibles"]
-        if(plazasDisponibles <= 0):
-            return JsonResponse({"ok:": "false", "msg": 'El formato de las plazasDisponibles no es válido'}, safe = False)
-        
-        fecha = data["fechaSalida"]
-        hora = data["horaSalida"]
+    def comprobarCaracteres(self, dato):
+        if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
+            return True
+        else:
+            return False
+
+    def comprobaciones(self, data):
+
+        encontrado = False
+        contador = 0
+
+        while(not encontrado and contador < len(data)):
+            encontrado = self.comprobarCaracteres(
+                list(data.values())[contador])
+            contador = contador + 1
+
+        if(encontrado):
+            return False, JsonResponse({"ok": "false", "msg": "No se pueden usar carácteres no válidos"}, safe=False)
+
+        duracion = float(data["duracion"])
+        if(duracion < 0):
+            return False, JsonResponse({"ok:": "false", "msg": 'La duracion no puede ser negativa'}, safe=False)
+
+        if(duracion == 0):
+            return False, JsonResponse({"ok:": "false", "msg": 'La duracion no puede ser cero'}, safe=False)
+
+        precio = float(data["precio"])
+        if(precio < 0):
+            return False, JsonResponse({"ok:": "false", "msg": 'El precio no puede ser negativo'}, safe=False)
+
+        if(precio == 0):
+            return False, JsonResponse({"ok:": "false", "msg": 'El precio no puede ser cero'}, safe=False)
+
+        plazasDisponibles = int(data["plazasDisponibles"])
+        if(plazasDisponibles < 0):
+            return False, JsonResponse({"ok:": "false", "msg": 'Las plazas no puede ser negativa'}, safe=False)
+
+        fecha = data["fechaDeSalida"]
+        fecha_dt = datetime.strptime(fecha, '%d/%m/%Y')
         now = datetime.now()
-        
-        if(fecha < now.date or hora < now.hour):
-            return JsonResponse({"ok:": "false", "msg": 'El formato de la fecha o la hora no es válido'}, safe = False)
+
+        if(fecha_dt <= now):
+            return False, JsonResponse({"ok:": "false", "msg": 'La fecha no es válida'}, safe=False)
 
         idUsuario = data["conductor"]
-        us = self.usuarios.find_one(idUsuario, {"_id" : 0})
+        us = self.usuarios.find_one({"uuid": idUsuario}, {"_id": 0})
 
         if(us == None):
-            return JsonResponse({"ok:": "false", "msg": 'El id del conductor no se encuentra'}, safe = False)
-        
-        return True
+            return False, JsonResponse({"ok:": "false", "msg": 'El id del conductor no se encuentra'}, safe=False)
 
+        return True, JsonResponse({"ok": "true"})
 
-    def get (self, request):
-        
+    def get(self, request):
+
         if(request.GET.get("uuid") == None):
             origen = request.GET.get("origen")
-            str = "{" 
-            str = str + "origen: " + origen if origen != None else str + "origen: { $exists: true}"
-            str = str + "destino: " + origen if origen != None else str + "destino: { $exists: true}"
-            str = str + "origen: " + origen if origen != None else str + "origen: { $exists: true}"
+            destino = request.GET.get("destino")
+            precio = request.GET.get("precio")
+            duracion = request.GET.get("duracion")
+            plazasDisponibles = request.GET.get("plazasDisponibles")
+            fechaDeSalida = request.GET.get("fechaDeSalida")
+            horaDeSalida = request.GET.get("horaDeSalida")
+
+            str = "{"
+            str = str + "origen: " + origen if origen != None else str + \
+                "origen: { $exists: true}"
+            str = str + "destino: " + destino if destino != None else str + \
+                "destino: { $exists: true}"
+            str = str + "precio: " + precio if precio != None else str + \
+                "precio: { $exists: true}"
+            str = str + "duracion: " + duracion if duracion != None else str + \
+                "duracion: { $exists: true}"
+            str = str + "plazasDisponibles: " + plazasDisponibles if plazasDisponibles != None else str + \
+                "plazasDisponibles: { $exists: true}"
+            str = str + "fechaDeSalida: " + fechaDeSalida if fechaDeSalida != None else str + \
+                "fechaDeSalida: { $exists: true}"
+            str = str + "horaDeSalida: " + horaDeSalida if horaDeSalida != None else str + \
+                "horaDeSalida: { $exists: true}"
             str + "}"
             print(str)
 
-            lista = []
-            
+            lista = list(self.trayectos.find(str, {"_id":0}))
+
+            #for t in lista:
+                #if()
+
             if lista == None:
-                return JsonResponse({"ok": "false", "msg": 'No hay trayectos disponibles'}, safe = False)
-                
-            return JsonResponse({"ok": "true", "trayectos": lista}, safe = False)
+                return JsonResponse({"ok": "false", "msg": 'No hay trayectos disponibles'}, safe=False)
+
+            return JsonResponse({"ok": "true", "trayectos": lista}, safe=False)
 
         else:
-            tr = self.trayectos.find_one({"uuid": request.GET.get("uuid")},{"_id": 0})
+            tr = self.trayectos.find_one(
+                {"uuid": request.GET.get("uuid")}, {"_id": 0})
 
             if tr == None:
-                return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe = False)
+                return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
-            return JsonResponse({"ok": "true", "trayecto": tr}, safe = False)
+            return JsonResponse({"ok": "true", "trayecto": tr}, safe=False)
 
-    #Crea un trayecto nuevo.
-def post (self, request):
+    # Crea un trayecto nuevo.
+    def post(self, request):
         data = QueryDict(request.body)
-        exito = self.comprobaciones(data, "post")
+        exito, jsonData = self.comprobaciones(data)
+
         if(exito):
             tr = {
-                "uuid" : str(uuid.uuid1()),
+                "uuid": str(uuid.uuid1()),
                 "origen": data["origen"],
                 "destino": data["destino"],
                 "tipoDeVehiculo": data["tipoDeVehiculo"],
-                "conductor": self.usuarios.find_one({"uuid": data["conductor"]}, {"_id": 0, "password": 0}),
+                "conductor": data["conductor"],
                 "duracion": data["duracion"],
                 "precio": data["precio"],
                 "pasajeros": [],
@@ -100,127 +145,156 @@ def post (self, request):
 
             self.trayectos.insert_one(tr)
 
-        tr = self.trayectos.find_one({"uuid": tr["uuid"]},{"_id": 0})
+            tr = self.trayectos.find_one({"uuid": tr["uuid"]}, {"_id": 0})
 
-        return JsonResponse({"ok": "true", "trayecto": tr})     
-    
+            return JsonResponse({"ok": "true", "trayecto": tr})
 
-    #Actualiza los datos del trayecto que coincida con el id proporcionado.
+        else:
+            return jsonData
+
+    # Actualiza los datos del trayecto que coincida con el id proporcionado.
+
     def put(self, request):
         data = QueryDict(request.body)
-        filter = {'uuid': data["uuid"]}
+    
+        exito, jsonData = self.comprobaciones(data)
+        if(exito):
+            filter = {'uuid': data["uuid"]}
 
-        if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
-            return JsonResponse({"ok": "false", "msg": 'No se ha encontrado un usuario con ese id'}, safe=False) 
-                   
-        newvalues = {"$set": {
-                       "origen": data["origen"],
-                        "destino": data["destino"],
-                        "tipoDeVehiculo": data["tipoDeVehiculo"],
-                        "conductor": self.usuarios.find_one({"uuid": data["conductor"]}, {"_id": 0}),  
-                        "duracion": data["duracion"],
-                        "precio": data["precio"],
-                        "plazasDisponible": data["plazasDisponibles"],
-                        "fechaDeSalida": data["fechaDeSalida"],
-                        "horaDeSalida": data["horaDeSalida"],
-                        "periodicidad": data["preriodicidad"]
-                        }
-                    }
-        self.trayectos.update_one(filter, newvalues)
-        return JsonResponse({"ok": "true"})
+            if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
+                return JsonResponse({"ok": "false", "msg": 'No se ha encontrado un usuario con ese id'}, safe=False)
 
+            newvalues = {"$set": {
+                "origen": data["origen"],
+                "destino": data["destino"],
+                "tipoDeVehiculo": data["tipoDeVehiculo"],
+                "conductor": self.usuarios.find_one({"uuid": data["conductor"]}, {"_id": 0}),
+                "duracion": data["duracion"],
+                "precio": data["precio"],
+                "plazasDisponibles": data["plazasDisponibles"],
+                "fechaDeSalida": data["fechaDeSalida"],
+                "horaDeSalida": data["horaDeSalida"],
+                "periodicidad": data["preriodicidad"]
+                }
+            }
+            self.trayectos.update_one(filter, newvalues)
+            return JsonResponse({"ok": "true"})
 
-    #Borra el trayecto que coincida con el id proporcionado.
+        else:
+            return jsonData
+
+    # Borra el trayecto que coincida con el id proporcionado.
+
     def delete(self, request):
         data = QueryDict(request.body)
-        self.trayectos.find_one_and_delete({"uuid" : data["uuid"]}, {"_id": 0})
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0})
+        if(tr == None):
+            return JsonResponse({"ok": "false", "msg": 'No se ha encontrado un trayecto con ese id'}, safe=False)
+        else:
+            self.trayectos.delete_one(tr)
+            return JsonResponse({"ok": "true"})
 
-        return JsonResponse({"ok" : "true"})
 
 class TrayectosCreados(View):
     def __init__(self):
-        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
-
-        db = client['IngWeb']
-        self.trayectos = db.trayectos
-        self.usuarios = db.users  
-
-    def get(self, request):
-
-        us = self.usuarios.find_one({"uuid" : request.GET.get("uuid")}, {"_id" : 0})
-
-        if us == None: 
-            return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe = False)
-        
-        trs = self.trayectos.find({"conductor" : request.GET.get("uuid")}, {"_id" : 0})
-
-        if trs == None:
-            return JsonResponse({"ok": "false", "msg": 'Este usuario no ha creado ningún trayecto'}, safe = False)
-
-        return JsonResponse({"ok" : "true", "trayectos": trs}, safe = False)
-
-class TrayectosInscritos(View):   
-    def __init__(self):
-        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
         db = client['IngWeb']
         self.trayectos = db.trayectos
         self.usuarios = db.users
 
-    def get (self, request):
-        us = self.usuarios.find_one({"uuid" : request.GET.get("uuid")}, {"_id" : 0})
+    def get(self, request):
 
-        if us == None: 
-            return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe = False)
-        
+        us = self.usuarios.find_one(
+            {"uuid": request.GET.get("uuid")}, {"_id": 0})
+
+        if us == None:
+            return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+
+        trs = self.trayectos.find(
+            {"conductor": request.GET.get("uuid")}, {"_id": 0})
+
+        if trs == None:
+            return JsonResponse({"ok": "false", "msg": 'Este usuario no ha creado ningún trayecto'}, safe=False)
+
+        return JsonResponse({"ok": "true", "trayectos": trs}, safe=False)
+
+
+class TrayectosInscritos(View):
+    def __init__(self):
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+
+        db = client['IngWeb']
+        self.trayectos = db.trayectos
+        self.usuarios = db.users
+
+    def get(self, request):
+        us = self.usuarios.find_one(
+            {"uuid": request.GET.get("uuid")}, {"_id": 0})
+
+        if us == None:
+            return JsonResponse({"ok": "false", "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+
         lista = []
-        for t in self.trayectos.find({}, {"_id" : 0}):
+        for t in self.trayectos.find({}, {"_id": 0}):
             if(request.GET.get("uuid") in t["pasajeros"]):
                 lista.append(t)
 
         if lista == None:
-            return JsonResponse({"ok": "false", "msg": 'Este usuario no es pasajero de ningún trayecto'}, safe = False)
+            return JsonResponse({"ok": "false", "msg": 'Este usuario no es pasajero de ningún trayecto'}, safe=False)
 
-        return JsonResponse({"ok" : "true", "trayectos": lista}, safe = False)
+        return JsonResponse({"ok": "true", "trayectos": lista}, safe=False)
 
-class Inscripcion(View):   
+
+class Inscripcion(View):
     def __init__(self):
-        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
         db = client['IngWeb']
         self.trayectos = db.trayectos
         self.usuarios = db.users
-    
+
     def post(self, request):
         data = QueryDict(request.body)
-        tr = self.trayectos.fin_one({"uuid" : data["uuid"]})
-        filtro = {"uuid" : data["uuid"]}
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id" : 0})
+        filtro = {"uuid": data["uuid"]}
 
         if tr == None:
-            return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe = False)
+            return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
-        self.trayectos.update_one(filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] - 1}})
-        self.trayectos.update_one(filtro, {"$ set": {"pasajeros": tr["pasajeros"].append(data["idUsuario"])}})
+        self.trayectos.update_one(filtro,
+            {"$set": {"plazasDisponibles": str(int(tr["plazasDisponibles"]) - 1)}})
+        self.trayectos.update_one(filtro,
+            {"$push": {"pasajeros": data["idUsuario"]}})
 
-        return JsonResponse({"ok" : "true", "pasajeros": tr["pasajeros"]}, safe = False)
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id" : 0})
 
-class Desinscripcion(View):   
+        return JsonResponse({"ok": "true", "pasajeros": tr["pasajeros"]}, safe=False)
+
+
+class Desinscripcion(View):
     def __init__(self):
-        client = MongoClient('mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
         db = client['IngWeb']
         self.trayectos = db.trayectos
         self.usuarios = db.users
-    
-    def post (self, request):
+
+    def post(self, request):
         data = QueryDict(request.body)
-        tr = self.trayectos.find_one({"uuid" : data["uuid"]})
-        filtro = {"uuid" : data["uuid"]}
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0})
+        filtro = {"uuid": data["uuid"]}
 
         if tr == None:
-            return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe = False)
+            return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
-        self.trayectos.update_one(filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] + 1}})
-        self.trayectos.update_one(filtro, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
+        self.trayectos.update_one(
+            filtro, {"$ set": {"plazasDisponibles": int(tr["plazasDisponible"]) + 1}})
+        self.trayectos.update_one(
+            filtro, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
 
-        return JsonResponse({"ok" : "true", "pasajeros" : tr["pasajeros"]}, safe = False)
+        return JsonResponse({"ok": "true", "pasajeros": tr["pasajeros"]}, safe=False)
