@@ -94,7 +94,7 @@ class Trayectos(View):
                 "plazasDisponibles": plazasDisponibles,
                 "fechaDeSalida": fechaDeSalida,
                 "horaDeSalida": horaDeSalida,
-                "conductor": idUsuario
+                "conductor": idUsuario #este no es el conductor del trayecto pero lo utilizamos en el data para que no de error
             }
 
             exito, jsonData = self.comprobaciones(data)
@@ -121,7 +121,8 @@ class Trayectos(View):
                 lista = list(self.trayectos.find(str, {"_id":0}))
 
                 for t in lista:
-                    if()
+                    if(t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"])):
+                        lista.remove(t)
 
                 if lista == None:
                     return JsonResponse({"ok": "false", "msg": 'No hay trayectos disponibles'}, safe=False)
@@ -312,8 +313,8 @@ class Desinscripcion(View):
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
         self.trayectos.update_one(
-            filtro, {"$ set": {"plazasDisponibles": int(tr["plazasDisponible"]) + 1}})
+            filtro, {"$set": {"plazasDisponibles": str(int(tr["plazasDisponible"]) + 1)}})
         self.trayectos.update_one(
-            filtro, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
+            filtro, {"$push": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
 
         return JsonResponse({"ok": "true", "pasajeros": tr["pasajeros"]}, safe=False)
