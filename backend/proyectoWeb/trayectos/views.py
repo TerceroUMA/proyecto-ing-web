@@ -79,7 +79,6 @@ class Trayectos(View):
         if(request.GET.get("uuid") == None):
             origen = request.GET.get("origen")
             destino = request.GET.get("destino")
-            cercania = request.GET.get("cercania")
             precio = request.GET.get("precio")
             duracion = request.GET.get("duracion")
             plazasDisponibles = request.GET.get("plazasDisponibles")
@@ -91,8 +90,6 @@ class Trayectos(View):
                 "origen: { $exists: true}"
             str = str + "destino: " + destino if destino != None else str + \
                 "destino: { $exists: true}"
-            str = str + "cercania: " + cercania if cercania != None else str + \
-                "cercania: { $exists: true}"
             str = str + "precio: " + precio if precio != None else str + \
                 "precio: { $exists: true}"
             str = str + "duracion: " + duracion if duracion != None else str + \
@@ -106,7 +103,10 @@ class Trayectos(View):
             str + "}"
             print(str)
 
-            lista = []
+            lista = list(self.trayectos.find(str, {"_id":0}))
+
+            #for t in lista:
+                #if()
 
             if lista == None:
                 return JsonResponse({"ok": "false", "msg": 'No hay trayectos disponibles'}, safe=False)
@@ -171,11 +171,11 @@ class Trayectos(View):
                 "conductor": self.usuarios.find_one({"uuid": data["conductor"]}, {"_id": 0}),
                 "duracion": data["duracion"],
                 "precio": data["precio"],
-                "plazasDisponible": data["plazasDisponibles"],
+                "plazasDisponibles": data["plazasDisponibles"],
                 "fechaDeSalida": data["fechaDeSalida"],
                 "horaDeSalida": data["horaDeSalida"],
                 "periodicidad": data["preriodicidad"]
-            }
+                }
             }
             self.trayectos.update_one(filter, newvalues)
             return JsonResponse({"ok": "true"})
@@ -187,9 +187,12 @@ class Trayectos(View):
 
     def delete(self, request):
         data = QueryDict(request.body)
-        self.trayectos.find_one_and_delete({"uuid": data["uuid"]}, {"_id": 0})
-
-        return JsonResponse({"ok": "true"})
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0})
+        if(tr == None):
+            return JsonResponse({"ok": "false", "msg": 'No se ha encontrado un trayecto con ese id'}, safe=False)
+        else:
+            self.trayectos.delete_one(tr)
+            return JsonResponse({"ok": "true"})
 
 
 class TrayectosCreados(View):
@@ -256,16 +259,18 @@ class Inscripcion(View):
 
     def post(self, request):
         data = QueryDict(request.body)
-        tr = self.trayectos.fin_one({"uuid": data["uuid"]})
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id" : 0})
         filtro = {"uuid": data["uuid"]}
 
         if tr == None:
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
-        self.trayectos.update_one(
-            filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] - 1}})
-        self.trayectos.update_one(
-            filtro, {"$ set": {"pasajeros": tr["pasajeros"].append(data["idUsuario"])}})
+        self.trayectos.update_one(filtro,
+            {"$set": {"plazasDisponibles": str(int(tr["plazasDisponibles"]) - 1)}})
+        self.trayectos.update_one(filtro,
+            {"$push": {"pasajeros": data["idUsuario"]}})
+
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id" : 0})
 
         return JsonResponse({"ok": "true", "pasajeros": tr["pasajeros"]}, safe=False)
 
@@ -281,14 +286,14 @@ class Desinscripcion(View):
 
     def post(self, request):
         data = QueryDict(request.body)
-        tr = self.trayectos.find_one({"uuid": data["uuid"]})
+        tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0})
         filtro = {"uuid": data["uuid"]}
 
         if tr == None:
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
         self.trayectos.update_one(
-            filtro, {"$ set": {"plazasDisponibles": tr["plazasDisponible"] + 1}})
+            filtro, {"$ set": {"plazasDisponibles": int(tr["plazasDisponible"]) + 1}})
         self.trayectos.update_one(
             filtro, {"$ set": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
 
