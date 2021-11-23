@@ -16,10 +16,12 @@ const Registrarse = () => {
     nombre: '',
     email: '',
     password: '',
-    confPassword: ''
+    confPassword: '',
+    edad: 0,
+    telefono: 0
   });
 
-  const { nombre, email, password, confPassword } = formValues;
+  const { nombre, email, password, confPassword, telefono, edad } = formValues;
 
   const sendToHome = () => {
 
@@ -39,6 +41,8 @@ const Registrarse = () => {
     history.push( '/iniciarSesion' );
 
   };
+
+  console.log({ nombre, email, password, confPassword, telefono, edad });
 
   return (
     <div className="auth__container">
@@ -85,6 +89,24 @@ const Registrarse = () => {
           placeholder="Confirmar contraseña"
           autoComplete="off"
         />
+        <input
+          className="sigIn__option form-control"
+          type="number"
+          name="telefono"
+          value={ telefono }
+          onChange={ handleInputChange}
+          placeholder="Telefono"
+        />
+        <input
+          className="sigIn__option form-control"
+          type="number"
+          name="edad"
+          value={ edad }
+          onChange={ handleInputChange}
+          placeholder="Edad"
+        />
+
+
         <p style={{ wordWrap: 'break-word' }}>¿Ya tienes una cuenta? <a href="#"
           onClick={ handleAnchor }>Inicia sesión</a> </p>
         <button className="btn btn-primary">

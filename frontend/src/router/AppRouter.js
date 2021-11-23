@@ -10,8 +10,6 @@ export const AppRouter = () => {
 
   const auth = useSelector( state => state.auth );
 
-  console.log( auth.uuid );
-
   return (
     <Router>
       <div>
