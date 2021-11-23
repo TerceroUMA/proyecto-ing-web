@@ -21,7 +21,7 @@ class Trayectos(View):
         lista = []
 
         for t in self.trayectos.find({}, {"_id": 0}):
-            if(t["plazasDisponibles"] < 0):
+            if(t["plazasDisponibles"] > 0):
                 lista.append(t)
         
         if lista == None:
