@@ -124,4 +124,42 @@ class Trayectos(View):
         self.trayectos.find_one_and_delete({"uuid" : request.GET.get("uuid")}, {"_id": 0})
 
         return JsonResponse({"ok" : "true"})
+    
+    #Devuelve una lista con todos los trayectos de un punto de origen
+    def getListOrigin(self, request):
+        lista = []
+        for t in self.trayectos.find({}, {"_id" : 0}):
+            if(t["origen"].find(request.GET.get("origen")) >= 0):
+                lista.append(t)
+        
+        if lista == None:
+            return JsonResponse({"ok": "false", "msg": 'No hay trayectos que partan de este punto'}, safe = False)
+
+        return JsonResponse({"ok" : "true", "trayectos": lista}, safe = False)
+    
+    #Devuelve una lista con todos los trayectos de un punto de destino
+    def getListOrigin(self, request):
+        lista = []
+        for t in self.trayectos.find({}, {"_id" : 0}):
+            if(t["destino"].find(request.GET.get("destino")) >= 0):
+                lista.append(t)
+        
+        if lista == None:
+            return JsonResponse({"ok": "false", "msg": 'No hay trayectos que finalicen en este punto'}, safe = False)
+
+        return JsonResponse({"ok" : "true", "trayectos": lista}, safe = False)
+
+    #Devuelve una lista con todos los trayectos cuya fecha sea superior a la dada.
+    def getListOrigin(self, request):
+        lista = []
+        for t in self.trayectos.find({}, {"_id" : 0}):
+            if(request.GET.get("fecha") <= t["fechaDeSalida"]):
+                lista.append(t)
+        
+        if lista == None:
+            return JsonResponse({"ok": "false", "msg": 'No hay trayectos para esta fecha'}, safe = False)
+
+        return JsonResponse({"ok" : "true", "trayectos": lista}, safe = False)
+    
+
  
