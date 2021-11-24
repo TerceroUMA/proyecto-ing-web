@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { fetchSinToken } from '../helpers/fetch';
+import { fetchSinToken, fetchUrlencoded } from '../helpers/fetch';
 import { types } from '../types/types';
 
 const login = ( user ) => ({
@@ -7,13 +7,13 @@ const login = ( user ) => ({
   payload: user
 });
 
-export const registrarse = ( nombre, email, password, confPassword, sendToHome ) => {
+export const registrarse = ( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) => {
 
   return async ( dispatch ) => {
 
     try {
 
-      const respuesta = await fetchSinToken( 'auth/new', { nombre, email, password, confPassword }, 'POST' );
+      const respuesta = await fetchUrlencoded( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {
@@ -30,9 +30,9 @@ export const registrarse = ( nombre, email, password, confPassword, sendToHome )
           }
         });
 
-        data.user.uuid = data.user.nombre;
-        delete data.user.nombre;
-        dispatch( login( data.user ) );
+        data.usuario.uuid = data.usuario.nombre;
+        delete data.usuario.nombre;
+        dispatch( login( data.usuario ) );
 
       } else {
 
@@ -59,18 +59,17 @@ export const registrarse = ( nombre, email, password, confPassword, sendToHome )
 
 };
 
-export const iniciarSesion = ( nombre, password, sendToHome ) => {
+export const iniciarSesion = ( correo, password, sendToHome ) => {
 
   return async ( dispatch ) => {
 
-    const respuesta = await fetchSinToken( 'auth', { nombre, password }, 'POST' );
+    const respuesta = await fetchUrlencoded( 'users/login', { correo, password }, 'POST' );
     const data = await respuesta.json();
 
     if ( data.ok ) {
 
-      data.user.uuid = data.user.nombre;
-      delete data.user.nombre;
-      dispatch( login( data.user ) );
+      data.usuario.uuid = data.usuario.correo;
+      dispatch( login( data.usuario ) );
 
       Swal.fire({
         title: 'Bienvenido',

@@ -12,11 +12,11 @@ const IniciarSesion = () => {
   const dispatch = useDispatch();
 
   const [formLoginValues, handleInputChange] = useForm({
-    nombre: '',
+    correo: '',
     password: ''
   });
 
-  const { nombre, password } = formLoginValues;
+  const { correo, password } = formLoginValues;
 
   const sendToHome = () => {
 
@@ -28,7 +28,7 @@ const IniciarSesion = () => {
 
     e.preventDefault();
 
-    dispatch( iniciarSesion( nombre, password, sendToHome ) );
+    dispatch( iniciarSesion( correo, password, sendToHome ) );
 
   };
 
@@ -41,13 +41,12 @@ const IniciarSesion = () => {
         className="auth__form"
         onSubmit={ handleOnSubmit }
       >
-        {/* Se podría añadir */}
-        {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
+
         <input
           className="sigIn__option form-control"
           type="text"
-          name="nombre"
-          value={ nombre }
+          name="correo"
+          value={ correo }
           onChange={ handleInputChange}
           placeholder="Correo electrónico"
         />
