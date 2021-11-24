@@ -1,15 +1,14 @@
 import React from 'react';
 import '../styles/home.css';
-import SearchBar from './SearchBar';
+import TrayectosFilter from './TrayectosFilter';
 
 export const Home = () => {
-
 
   return (
     <div className="home-container">
       <h1>Home Screen</h1>
 
-      <SearchBar />
+      <TrayectosFilter />
 
       <div className="trayectos-container">
         <div className="trayecto">

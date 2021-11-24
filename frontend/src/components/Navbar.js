@@ -9,7 +9,7 @@ export default function Navbar() {
         <Link to="/"
           className="navbar-brand"
         >
-            Learn alone
+            Bla bla car
         </Link>
         <button className="navbar-toggler"
           type="button"

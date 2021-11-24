@@ -7,3 +7,5 @@ frontend/build
 backend/proyectoWeb/proyectoWeb/__pycache__/
 
 .DS_Store
+
+backend/proyectoWeb/login/__pycache__/

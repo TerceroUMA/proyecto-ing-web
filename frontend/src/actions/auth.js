@@ -7,13 +7,13 @@ const login = ( user ) => ({
   payload: user
 });
 
-export const registrarse = ( nombre, email, password, confPassword, sendToHome ) => {
+export const registrarse = ( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) => {
 
   return async ( dispatch ) => {
 
     try {
 
-      const respuesta = await fetchSinToken( 'auth/new', { nombre, email, password, confPassword }, 'POST' );
+      const respuesta = await fetchSinToken( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {
@@ -59,17 +59,18 @@ export const registrarse = ( nombre, email, password, confPassword, sendToHome )
 
 };
 
-export const iniciarSesion = ( nombre, password, sendToHome ) => {
+export const iniciarSesion = ( correo, password, sendToHome ) => {
 
   return async ( dispatch ) => {
 
-    const respuesta = await fetchSinToken( 'auth', { nombre, password }, 'POST' );
+    const respuesta = await fetchSinToken( 'users/login', { correo, password }, 'POST' );
     const data = await respuesta.json();
 
     if ( data.ok ) {
 
-      data.user.uuid = data.user.nombre;
-      delete data.user.nombre;
+      console.log( data );
+
+      /* data.user.uuid = data.user.correo;
       dispatch( login( data.user ) );
 
       Swal.fire({
@@ -81,7 +82,7 @@ export const iniciarSesion = ( nombre, password, sendToHome ) => {
           sendToHome();
 
         }
-      });
+      }); */
 
     } else {
 

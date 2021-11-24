@@ -14,25 +14,28 @@ const Registrarse = () => {
 
   const [formValues, handleInputChange] = useForm({
     nombre: '',
-    email: '',
+    apellidos: '',
+    correo: '',
     password: '',
-    confPassword: '',
-    edad: 0,
-    telefono: 0
+    confirmarPassword: '',
+    edad: '',
+    telefono: '',
+    localidad: ''
   });
 
-  const { nombre, email, password, confPassword, telefono, edad } = formValues;
+  const { nombre, apellidos, correo, password, confirmarPassword, telefono, edad, localidad } = formValues;
 
   const sendToHome = () => {
 
     history.push( '/' );
 
   };
+
   const handleOnSubmit = async ( e ) => {
 
     e.preventDefault();
 
-    dispatch( registrarse( nombre, email, password, confPassword, sendToHome ) );
+    dispatch( registrarse( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) );
 
   };
 
@@ -42,7 +45,6 @@ const Registrarse = () => {
 
   };
 
-  console.log({ nombre, email, password, confPassword, telefono, edad });
 
   return (
     <div className="auth__container">
@@ -65,11 +67,19 @@ const Registrarse = () => {
         />
         <input
           className="sigIn__option form-control"
-          type="email"
-          name="email"
-          value={ email }
+          type="text"
+          name="apellidos"
+          value={ apellidos }
           onChange={ handleInputChange}
-          placeholder="Email"
+          placeholder="Apellidos"
+        />
+        <input
+          className="sigIn__option form-control"
+          type="email"
+          name="correo"
+          value={ correo }
+          onChange={ handleInputChange}
+          placeholder="Correo electrónico"
         />
         <input
           className="sigIn__option form-control"
@@ -83,8 +93,8 @@ const Registrarse = () => {
         <input
           className="sigIn__option form-control"
           type="password"
-          name="confPassword"
-          value={ confPassword }
+          name="confirmarPassword"
+          value={ confirmarPassword }
           onChange={ handleInputChange}
           placeholder="Confirmar contraseña"
           autoComplete="off"
@@ -104,6 +114,15 @@ const Registrarse = () => {
           value={ edad }
           onChange={ handleInputChange}
           placeholder="Edad"
+        />
+
+        <input
+          className="sigIn__option form-control"
+          type="text"
+          name="localidad"
+          value={ localidad }
+          onChange={ handleInputChange}
+          placeholder="Ciudad donde vive"
         />
 
 
