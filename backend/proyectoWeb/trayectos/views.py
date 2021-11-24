@@ -278,6 +278,8 @@ class TrayectosCreados(View):
         if trs == None:
             return JsonResponse({"ok": False, "msg": 'Este usuario no ha creado ningún trayecto'}, safe=False)
 
+        sorted(trs, key=lambda x : x['fechaDeSalida'])
+
         return JsonResponse({"ok": True, "trayectos": trs}, safe=False)
 
 
@@ -304,6 +306,8 @@ class TrayectosInscritos(View):
 
         if lista == None:
             return JsonResponse({"ok": False, "msg": 'Este usuario no es pasajero de ningún trayecto'}, safe=False)
+
+        sorted(lista, key=lambda x : x['fechaDeSalida'])
 
         return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
