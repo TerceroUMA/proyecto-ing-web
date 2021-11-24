@@ -320,8 +320,11 @@ class Desinscripcion(View):
             return JsonResponse({"ok": "false", "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
 
         self.trayectos.update_one(
-            filtro, {"$set": {"plazasDisponibles": str(int(tr["plazasDisponible"]) + 1)}})
+            filtro, {"$set": {"plazasDisponibles": str(int(tr["plazasDisponibles"]) + 1)}})
+        lista = list(tr["pasajeros"].remove(data["idUsuario"]))
+        if(lista == None): lista = []
+
         self.trayectos.update_one(
-            filtro, {"$push": {"pasajeros": tr["pasajeros"].remove(data["idUsuario"])}})
+            filtro, {"$set": {"pasajeros": lista}})
 
         return JsonResponse({"ok": "true", "pasajeros": tr["pasajeros"]}, safe=False)
