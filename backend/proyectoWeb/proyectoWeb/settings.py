@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'usuarios',
     'trayectos',
-    'datosAbiertos',
 ]
 
 MIDDLEWARE = [
