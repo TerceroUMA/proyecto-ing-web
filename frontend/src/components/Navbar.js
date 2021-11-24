@@ -16,7 +16,7 @@ export default function Navbar() {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNavDropdown"
           aria-controls="navbarNavDropdown"
-          aria-expanded="false"
+          aria-expanded=False
           aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
