@@ -80,18 +80,15 @@ class Trayectos(View):
             origen = request.GET.get("origen")
             destino = request.GET.get("destino")
             precio = request.GET.get("precio")
-            duracion = request.GET.get("duracion")
             plazasDisponibles = request.GET.get("plazasDisponibles")
             fechaDeSalida = request.GET.get("fechaDeSalida")
             horaDeSalida = request.GET.get("horaDeSalida")
         
-
-
             data = {
                 "origen": origen,
                 "destino": destino,
                 "precio": precio,
-                "duracion": duracion,
+                "duracion": 1, #este no es la duración del trayecto, pero lo utilizamos en el data para que no de error
                 "plazasDisponibles": plazasDisponibles,
                 "fechaDeSalida": fechaDeSalida,
                 "horaDeSalida": horaDeSalida,
@@ -102,26 +99,36 @@ class Trayectos(View):
 
             if(exito):
                 str = "{"
-                str = str + "origen: " + origen if origen != None else str + \
+                str = str + "origen: " + origen if origen != None or origen != "" else str + \
                     "origen: { $exists: true}"
-                str = str + "destino: " + destino if destino != None else str + \
+                str = str + "destino: " + destino if destino != None or destino != "" else str + \
                     "destino: { $exists: true}"
-                str = str + "duracion: " + duracion if duracion != None else str + \
-                    "duracion: { $exists: true}"
                 str + "}"
                 print(str)
 
                 lista = list(self.trayectos.find(str, {"_id":0}))
 
                 for t in lista:
-                    fecha = t["fechaDeSalida"]
-                    fecha_dt = datetime.strptime(fecha, '%d/%m/%Y')
 
-                    condicion = (t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"]) or precio > int(t["precio"]) or
-                                plazasDisponibles < int(t["plazasDisponibles"]) or fecha_dt < fechaDeSalida)
+                    if precio == None or precio == "": precio = 0.0
+                    if plazasDisponibles == None or precio == "": plazasDisponibles = 0
+                    if fechaDeSalida == None or fechaDeSalida == "": fechaDeSalida = datetime.now
+                    if horaDeSalida == None or fechaDeSalida == "": horaDeSalida = datetime.now
+                    
+                    condicion = (t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"]) or precio > float(t["precio"]) or
+                                plazasDisponibles < int(t["plazasDisponibles"]) or plazasDisponibles != 0)
 
                     if condicion:
                         lista.remove(t)
+                    else:
+                        fecha = t["fechaDeSalida"]
+                        fecha_dt = datetime.strptime(fecha, '%d/%m/%Y')
+
+                        hora = t["fechaDeSalida"]
+                        hora_dt = datetime.strptime(hora, '%H:%M')
+
+                        if(fecha_dt < fechaDeSalida and hora_dt < horaDeSalida):
+                            lista.remove(t)
                     
 
                 if lista == None:
