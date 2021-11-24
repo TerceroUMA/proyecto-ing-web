@@ -115,8 +115,8 @@ class Trayectos(View):
                     if fechaDeSalida == None or fechaDeSalida == "": fechaDeSalida = datetime.now
                     if horaDeSalida == None or fechaDeSalida == "": horaDeSalida = datetime.now
                     
-                    condicion = (t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"]) or precio > float(t["precio"]) or
-                                plazasDisponibles < int(t["plazasDisponibles"]) or plazasDisponibles != 0)
+                    condicion = (t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"]) or 
+                                precio > float(t["precio"]) or plazasDisponibles < int(t["plazasDisponibles"]))
 
                     if condicion:
                         lista.remove(t)
