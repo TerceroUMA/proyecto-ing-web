@@ -85,7 +85,8 @@ class Trayectos(View):
             fechaDeSalida = request.GET.get("fechaDeSalida")
             horaDeSalida = request.GET.get("horaDeSalida")
         
-            
+
+
             data = {
                 "origen": origen,
                 "destino": destino,
@@ -105,24 +106,23 @@ class Trayectos(View):
                     "origen: { $exists: true}"
                 str = str + "destino: " + destino if destino != None else str + \
                     "destino: { $exists: true}"
-                str = str + "precio: " + precio if precio != None else str + \
-                    "precio: { $exists: true}"
                 str = str + "duracion: " + duracion if duracion != None else str + \
                     "duracion: { $exists: true}"
-                str = str + "plazasDisponibles: " + plazasDisponibles if plazasDisponibles != None else str + \
-                    "plazasDisponibles: { $exists: true}"
-                str = str + "fechaDeSalida: " + fechaDeSalida if fechaDeSalida != None else str + \
-                    "fechaDeSalida: { $exists: true}"
-                str = str + "horaDeSalida: " + horaDeSalida if horaDeSalida != None else str + \
-                    "horaDeSalida: { $exists: true}"
                 str + "}"
                 print(str)
 
                 lista = list(self.trayectos.find(str, {"_id":0}))
 
                 for t in lista:
-                    if(t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"])):
+                    fecha = t["fechaDeSalida"]
+                    fecha_dt = datetime.strptime(fecha, '%d/%m/%Y')
+
+                    condicion = (t["conductor"] == idUsuario or idUsuario in list(t["pasajeros"]) or precio > int(t["precio"]) or
+                                plazasDisponibles < int(t["plazasDisponibles"]) or fecha_dt < fechaDeSalida)
+
+                    if condicion:
                         lista.remove(t)
+                    
 
                 if lista == None:
                     return JsonResponse({"ok": "false", "msg": 'No hay trayectos disponibles'}, safe=False)
