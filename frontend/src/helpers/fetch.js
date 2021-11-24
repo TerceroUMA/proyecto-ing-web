@@ -33,3 +33,39 @@ export const fetchSinToken = ( endpoint, data, method = 'GET' ) => {
   }
 
 };
+
+
+export const fetchUrlencoded = ( endpoint, data, method = 'GET' ) => {
+
+  const url = `${baseUrl}/${endpoint}`;
+
+  if ( method === 'GET' ) {
+
+    return fetch( url );
+
+  } else {
+
+    // Para que lo pille python con x-www-form-urlencoded
+    let formBody = [];
+    for ( const property in data ) {
+
+      const encodedKey = encodeURIComponent( property );
+      const encodedValue = encodeURIComponent( data[property]);
+      formBody.push( encodedKey + '=' + encodedValue );
+
+    }
+
+    formBody = formBody.join( '&' );
+
+
+    return fetch( url, {
+      method,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      },
+      body: formBody
+    });
+
+  }
+
+};

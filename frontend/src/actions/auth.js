@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { fetchSinToken } from '../helpers/fetch';
+import { fetchSinToken, fetchUrlencoded } from '../helpers/fetch';
 import { types } from '../types/types';
 
 const login = ( user ) => ({
@@ -13,7 +13,7 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
 
     try {
 
-      const respuesta = await fetchSinToken( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' );
+      const respuesta = await fetchUrlencoded( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {
@@ -30,9 +30,9 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
           }
         });
 
-        data.user.uuid = data.user.nombre;
-        delete data.user.nombre;
-        dispatch( login( data.user ) );
+        data.usuario.uuid = data.usuario.nombre;
+        delete data.usuario.nombre;
+        dispatch( login( data.usuario ) );
 
       } else {
 
@@ -63,15 +63,13 @@ export const iniciarSesion = ( correo, password, sendToHome ) => {
 
   return async ( dispatch ) => {
 
-    const respuesta = await fetchSinToken( 'users/login', { correo, password }, 'POST' );
+    const respuesta = await fetchUrlencoded( 'users/login', { correo, password }, 'POST' );
     const data = await respuesta.json();
 
     if ( data.ok ) {
 
-      console.log( data );
-
-      /* data.user.uuid = data.user.correo;
-      dispatch( login( data.user ) );
+      data.usuario.uuid = data.usuario.correo;
+      dispatch( login( data.usuario ) );
 
       Swal.fire({
         title: 'Bienvenido',
@@ -82,7 +80,7 @@ export const iniciarSesion = ( correo, password, sendToHome ) => {
           sendToHome();
 
         }
-      }); */
+      });
 
     } else {
 

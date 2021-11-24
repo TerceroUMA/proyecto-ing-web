@@ -23,7 +23,6 @@ class Login(View):
     def post(self, request):
 
         # Inicio de Sesión
-
         us = self.users.find_one({"correo": request.POST.get("correo")})
 
         if (us == None):
@@ -146,12 +145,12 @@ class Users(View):
                         us = self.users.find_one({"uuid": us["uuid"]}, {
                                                 "_id": 0, "password": 0})
 
-                        return JsonResponse({"ok": True, "usuario": us})   
+                        return JsonResponse({"ok": True, "usuario": us, "msg": "El usuario se ha registrado con éxito"})   
                 else:
                     return jsonData
                 
             else:
-                    return jsonDataVacio
+                return jsonDataVacio
 
     # Actualiza los datos del usuario que coincida con el id proporcionado.
     def put(self, request):
