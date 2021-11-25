@@ -5,6 +5,7 @@ from django.http.response import JsonResponse
 from pymongo import MongoClient
 import certifi
 import uuid
+import sys
 
 # Create your views here.
 
@@ -87,67 +88,53 @@ class Trayectos(View):
             precio = request.GET.get("precio")
             plazasDisponibles = request.GET.get("plazasDisponibles")
             fechaDeSalida = request.GET.get("fechaDeSalida")
-            horaDeSalida = request.GET.get("horaDeSalida")
             usuarioConectado = request.GET.get("idUsuario")
+            fecha_dt = datetime.now
 
-            data = {
-                "origen": origen,
-                "destino": destino,
-                "precio": precio,
-                "duracion": 1,  # este no es la duración del trayecto, pero lo utilizamos en el data para que no de error
-                "plazasDisponibles": plazasDisponibles,
-                "fechaDeSalida": fechaDeSalida,
-                "horaDeSalida": horaDeSalida,
-                # este no es el conductor del trayecto pero lo utilizamos en el data para que no de error
-                "conductor": usuarioConectado
-            }
+            if precio == None or precio == "":
+                precio = "0.0"
+            elif float(precio) < 0.0:
+                return False, JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
 
-            exito, jsonData = self.comprobaciones(data)
+            if plazasDisponibles == None or plazasDisponibles == "":
+                    plazasDisponibles = str(sys.maxsize * 2 + 1)
+            elif int(plazasDisponibles) < 0:
+                return False, JsonResponse({"ok:": False, "msg": 'Las plazas no pueden ser negativa'}, safe=False)
 
-            if(exito):
-                str = "{"
-                str = str + "origen: " + origen if origen != None or origen != "" else str + \
-                    "origen: { $exists: true}"
-                str = str + "destino: " + destino if destino != None or destino != "" else str + \
-                    "destino: { $exists: true}"
-                str + "}"
-                print(str)
+            try:
+                if fechaDeSalida == None or fechaDeSalida == "":
+                    fecha_dt = datetime.strptime("9999-12-31", '%Y-%m-%d')
+                else:
+                    fecha_dt = datetime.strptime(fechaDeSalida, '%Y-%m-%d')
 
-                lista = list(self.trayectos.find(str, {"_id": 0}))
+                    now = datetime.now()
 
-                for t in lista:
+                    if(fecha_dt <= now):
+                        return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
-                    if precio == None or precio == "":
-                        precio = 0.0
-                    if plazasDisponibles == None or precio == "":
-                        plazasDisponibles = 0
-                    if fechaDeSalida == None or fechaDeSalida == "":
-                        fechaDeSalida = datetime.now
-                    if horaDeSalida == None or fechaDeSalida == "":
-                        horaDeSalida = datetime.now
+            except ValueError:
+                return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
-                    condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
-                                 precio > float(t["precio"]) or plazasDisponibles < int(t["plazasDisponibles"]))
+            lista = list(self.trayectos.find({}, {"_id": 0}))
+            
+            for t in self.trayectos.find({}, {"_id": 0}):
+                fecha = t["fechaDeSalida"]
+                fecha_aux = datetime.strptime(fecha, '%Y-%m-%d')
+                condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
+                            float(precio) <= float(t["precio"]) or int(plazasDisponibles) <= int(t["plazasDisponibles"]) or  
+                            fecha_aux <= fecha_dt) 
+                
+                if(not (origen == None) and not (origen == "")): 
+                    condicion = condicion or origen.find(t["origen"]) < 0
+                if(not (destino == None) and not (destino == "")):
+                    condicion = condicion or destino.find(t["destino"]) < 0
+                if condicion:
+                    lista.remove(t)
 
-                    if condicion:
-                        lista.remove(t)
-                    else:
-                        fecha = t["fechaDeSalida"]
-                        fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
+            if lista == None:
+                return JsonResponse({"ok": False, "msg": 'No hay trayectos disponibles'}, safe=False)
 
-                        hora = t["fechaDeSalida"]
-                        hora_dt = datetime.strptime(hora, '%H:%M')
-
-                        if(fecha_dt < fechaDeSalida and hora_dt < horaDeSalida):
-                            lista.remove(t)
-
-                if lista == None:
-                    return JsonResponse({"ok": False, "msg": 'No hay trayectos disponibles'}, safe=False)
-
-                return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
-
-            else:
-                return jsonData
+            return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
         else:
             tr = self.trayectos.find_one(
@@ -264,19 +251,14 @@ class TrayectosCreados(View):
         self.trayectos = db.trayectos
         self.usuarios = db.users
 
-    def get(self, request):
-
-        us = self.usuarios.find_one(
-            {"uuid": request.GET.get("uuid")}, {"_id": 0})
-
-        if us == None:
-            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+    def get(self, request, idUsuario):
 
         trs = self.trayectos.find(
-            {"conductor": request.GET.get("uuid")}, {"_id": 0})
+            {"conductor": idUsuario}, {"_id": 0})
 
-        if trs == None:
-            return JsonResponse({"ok": False, "msg": 'Este usuario no ha creado ningún trayecto'}, safe=False)
+        if trs != None:
+            trs = sorted(trs, key=lambda x: x["fechaDeSalida"])
+            trs.reverse() 
 
         return JsonResponse({"ok": True, "trayectos": trs}, safe=False)
 
@@ -290,20 +272,16 @@ class TrayectosInscritos(View):
         self.trayectos = db.trayectos
         self.usuarios = db.users
 
-    def get(self, request):
-        us = self.usuarios.find_one(
-            {"uuid": request.GET.get("uuid")}, {"_id": 0})
-
-        if us == None:
-            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+    def get(self, request, idUsuario):
 
         lista = []
         for t in self.trayectos.find({}, {"_id": 0}):
-            if(request.GET.get("uuid") in t["pasajeros"]):
+            if(idUsuario in t["pasajeros"]):
                 lista.append(t)
 
-        if lista == None:
-            return JsonResponse({"ok": False, "msg": 'Este usuario no es pasajero de ningún trayecto'}, safe=False)
+        if lista != None:
+            lista = sorted(lista, key=lambda x: x["fechaDeSalida"])
+            lista.reverse()
 
         return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
