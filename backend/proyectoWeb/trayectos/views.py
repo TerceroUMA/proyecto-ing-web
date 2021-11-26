@@ -19,10 +19,6 @@ class Trayectos(View):
         self.trayectos = db.trayectos
         self.usuarios = db.users
 
-    # Devuelve el listado completo de trayectos. Si no hay plazas disponibles no se devuelve el trayecto.
-
-    # Devuelve todos los datos del trayecto que coincida con el id proporcionado.
-
     def comprobarCaracteres(self, dato):
         if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
             return True
@@ -40,14 +36,18 @@ class Trayectos(View):
             contador = contador + 1
 
         if(encontrado):
-            return False, JsonResponse({"ok": False, "msg": "No se pueden usar carácteres no válidos"}, safe=False)
+            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
 
         duracion = float(data["duracion"])
         if(duracion < 0):
-            return False, JsonResponse({"ok:": False, "msg": 'La duracion no puede ser negativa'}, safe=False)
+            return False, JsonResponse({"ok:": False, "msg": 'La duración no puede ser negativa'}, safe=False)
 
         if(duracion == 0):
-            return False, JsonResponse({"ok:": False, "msg": 'La duracion no puede ser cero'}, safe=False)
+            return False, JsonResponse({"ok:": False, "msg": 'La duración no puede ser cero'}, safe=False)
+
+        periodicidad = int(data["periodicidad"])
+        if(periodicidad < 0):
+            return False, JsonResponse({"ok": False, "msg": "La periodicidad no puede ser negativa"})
 
         precio = float(data["precio"])
         if(precio < 0):
@@ -58,7 +58,7 @@ class Trayectos(View):
 
         plazasDisponibles = int(data["plazasDisponibles"])
         if(plazasDisponibles < 0):
-            return False, JsonResponse({"ok:": False, "msg": 'Las plazas no pueden ser negativa'}, safe=False)
+            return False, JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
 
         fecha = data["fechaDeSalida"]
         try:
@@ -76,9 +76,13 @@ class Trayectos(View):
         us = self.usuarios.find_one({"uuid": idUsuario}, {"_id": 0})
 
         if(us == None):
-            return False, JsonResponse({"ok:": False, "msg": 'El id del conductor no se encuentra'}, safe=False)
+            return False, JsonResponse({"ok:": False, "msg": 'No se encuentra a ningún conductor con el id introducido'}, safe=False)
 
         return True, JsonResponse({"ok": True})
+
+    # Devuelve el listado completo de trayectos. Si no hay plazas disponibles no se devuelve el trayecto.
+
+    # Devuelve todos los datos del trayecto que coincida con el id proporcionado.
 
     def get(self, request):
 
@@ -92,18 +96,18 @@ class Trayectos(View):
             fecha_dt = datetime.now
 
             if precio == None or precio == "":
-                precio = "0.0"
+                precio = str(sys.float_info.max)
             elif float(precio) < 0.0:
                 return False, JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
 
             if plazasDisponibles == None or plazasDisponibles == "":
-                    plazasDisponibles = str(sys.maxsize * 2 + 1)
+                plazasDisponibles = "0"
             elif int(plazasDisponibles) < 0:
-                return False, JsonResponse({"ok:": False, "msg": 'Las plazas no pueden ser negativa'}, safe=False)
+                return False, JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
 
             try:
                 if fechaDeSalida == None or fechaDeSalida == "":
-                    fecha_dt = datetime.strptime("9999-12-31", '%Y-%m-%d')
+                    fecha_dt = datetime.strptime("0001-01-01", '%Y-%m-%d')
                 else:
                     fecha_dt = datetime.strptime(fechaDeSalida, '%Y-%m-%d')
 
@@ -116,15 +120,15 @@ class Trayectos(View):
                 return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
             lista = list(self.trayectos.find({}, {"_id": 0}))
-            
+
             for t in self.trayectos.find({}, {"_id": 0}):
                 fecha = t["fechaDeSalida"]
                 fecha_aux = datetime.strptime(fecha, '%Y-%m-%d')
                 condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
-                            float(precio) <= float(t["precio"]) or int(plazasDisponibles) <= int(t["plazasDisponibles"]) or  
-                            fecha_aux <= fecha_dt) 
-                
-                if(not (origen == None) and not (origen == "")): 
+                             float(precio) <= float(t["precio"]) or int(plazasDisponibles) > int(t["plazasDisponibles"]) or
+                             fecha_aux <= fecha_dt)
+
+                if(not (origen == None) and not (origen == "")):
                     condicion = condicion or origen.find(t["origen"]) < 0
                 if(not (destino == None) and not (destino == "")):
                     condicion = condicion or destino.find(t["destino"]) < 0
@@ -141,7 +145,7 @@ class Trayectos(View):
                 {"uuid": request.GET.get("uuid")}, {"_id": 0})
 
             if tr == None:
-                return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
+                return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
 
             return JsonResponse({"ok": True, "trayecto": tr}, safe=False)
 
@@ -149,7 +153,6 @@ class Trayectos(View):
     def paramVacio(self, data):
         condicionNull = False
         for d in data.values():
-            print(d)
             if(d is None or d == ""):
                 condicionNull = True
 
@@ -205,7 +208,7 @@ class Trayectos(View):
                 filter = {'uuid': data["uuid"]}
 
                 if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
-                    return JsonResponse({"ok": False, "msg": 'No se ha ningun trayecti con ese id'}, safe=False)
+                    return JsonResponse({"ok": False, "msg": 'No se ha ningun trayecto con ese id'}, safe=False)
 
                 newvalues = {"$set": {
                     "origen": data["origen"],
@@ -222,7 +225,10 @@ class Trayectos(View):
                 }
 
                 self.trayectos.update_one(filter, newvalues)
-                return JsonResponse({"ok": True})
+                tr = self.trayectos.find_one(
+                    {"uuid": data["uuid"]}, {"_id": 0})
+
+                return JsonResponse({"ok": True, "trayecto": tr})
 
             else:
                 return jsonData
@@ -236,7 +242,7 @@ class Trayectos(View):
         data = QueryDict(request.body)
         tr = self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0})
         if(tr == None):
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un trayecto con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un trayecto con el id introducido'}, safe=False)
         else:
             self.trayectos.delete_one(tr)
             return JsonResponse({"ok": True})
@@ -258,7 +264,7 @@ class TrayectosCreados(View):
 
         if trs != None:
             trs = sorted(trs, key=lambda x: x["fechaDeSalida"])
-            trs.reverse() 
+            trs.reverse()
 
         return JsonResponse({"ok": True, "trayectos": trs}, safe=False)
 
@@ -301,7 +307,7 @@ class Inscripcion(View):
         filtro = {"uuid": data["uuid"]}
 
         if tr == None:
-            return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
 
         self.trayectos.update_one(filtro,
                                   {"$set": {"plazasDisponibles": str(int(tr["plazasDisponibles"]) - 1)}})
@@ -328,7 +334,7 @@ class Desinscripcion(View):
         filtro = {"uuid": data["uuid"]}
 
         if tr == None:
-            return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
 
         self.trayectos.update_one(
             filtro, {"$set": {"plazasDisponibles": str(int(tr["plazasDisponibles"]) + 1)}})
