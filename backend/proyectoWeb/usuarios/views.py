@@ -26,7 +26,7 @@ class Login(View):
         us = self.users.find_one({"correo": request.POST.get("correo")})
 
         if (us == None):
-            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese correo'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el correo introducido'}, safe=False)
 
         else:
 
@@ -57,7 +57,7 @@ class Users(View):
                                      "_id": 0, "password": 0})
             if us == None:
 
-                return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+                return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el id introducido'}, safe=False)
 
             return JsonResponse({"ok": True, "usuario": us}, safe=False)
 
@@ -116,7 +116,7 @@ class Users(View):
             if(d is None or d == ""):
                 condicionNull = True
 
-        return condicionNull, JsonResponse({"ok:": False, "msg": 'Existe algún campo vacío'}, safe=False)
+        return condicionNull, JsonResponse({"ok:": False, "msg": 'No se pueden introducir campos vacíos'}, safe=False)
 
     # Inserta un usuario en la base de datos (Registrarse)
 
@@ -128,7 +128,7 @@ class Users(View):
         hashed = bcrypt.hashpw(data["password"].encode(), salt)
 
         if(not bcrypt.checkpw(data["confirmarPassword"].encode(), hashed)):
-            return JsonResponse({"ok": False, "msg": "Las contraseñas no coinciden"})
+            return JsonResponse({"ok": False, "msg": "Las contraseñas introducidas no coinciden"})
         else:
             vacio, jsonDataVacio = self.paramVacio(data)
             if(not vacio):
@@ -158,7 +158,7 @@ class Users(View):
         filter = {'uuid': data["uuid"]}
 
         if(self.users.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
 
         vacio, jsonDataVacio = self.paramVacio(data)
         if(not vacio):
@@ -173,7 +173,9 @@ class Users(View):
                     newvalues = {"$set": {'nombre': data["nombre"], 'apellidos': data["apellidos"], 'password': hashed,
                                         'edad': data["edad"], 'correo': data["correo"], 'telefono': data["telefono"], 'localidad': data["localidad"]}}
                     self.users.update_one(filter, newvalues)
-                    return JsonResponse({"ok": True})
+                    us = self.users.find_one({"uuid": data["uuid"]}, {
+                                                "_id": 0, "password": 0})
+                    return JsonResponse({"ok": True, "usuario": us})
                 
             else:
                 return jsonData
@@ -185,7 +187,7 @@ class Users(View):
         data = QueryDict(request.body)
         us = self.users.find_one({"uuid": data["uuid"]}, {"_id": 0})
         if us == None:
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
 
         self.users.delete_one(us)
         return JsonResponse({"ok": True})
