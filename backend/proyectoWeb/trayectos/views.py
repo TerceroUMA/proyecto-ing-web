@@ -176,7 +176,7 @@ class Trayectos(View):
                     "duracion": data["duracion"],
                     "precio": data["precio"],
                     "pasajeros": [],
-                    "plazasDisponible": data["plazasDisponibles"],
+                    "plazasDisponibles": data["plazasDisponibles"],
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
                     "periodicidad": data["periodicidad"]
