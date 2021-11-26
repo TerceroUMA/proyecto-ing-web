@@ -1,8 +1,18 @@
 import React from 'react';
+import { fetchUrlencoded } from '../helpers/fetch';
 import '../styles/home.css';
 import TrayectosFilter from './TrayectosFilter';
 
 export const Home = () => {
+
+
+  fetchUrlencoded( 'trayectos' )
+    .then( response => response.json() )
+    .then( data => {
+
+      console.log( data );
+
+    });
 
   return (
     <div className="home-container">

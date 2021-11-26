@@ -20,8 +20,6 @@ export const fetchSinToken = ( endpoint, data, method = 'GET' ) => {
 
   } else {
 
-    console.log( data );
-
     return fetch( url, {
       method,
       headers: {

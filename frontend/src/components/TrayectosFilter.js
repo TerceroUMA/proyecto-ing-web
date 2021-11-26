@@ -80,16 +80,6 @@ export default function TrayectosFilter() {
             value={fechaDeSalida}
           />
 
-          <label htmlFor="horaDeSalida">Hora de salida igual o mayor a:</label>
-          <input
-            className="form-control"
-            type="text"
-            name="horaDeSalida"
-            onChange={handleInputChange}
-            value={horaDeSalida}
-            placeholder="hh:mm"
-          />
-
           <button className="btn btn-primary form-control"> Buscar </button>
 
         </form>
