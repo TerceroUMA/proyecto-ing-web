@@ -2,23 +2,35 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from '../hooks/useForm';
 
-export default function Gasolinera() {
+export const Gasolinera = () => {
 
   const [lista, setLista] = useState([]);
+
+  const getData = () => {
+
+    fetch( 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/' )
+      .then( response => response.json() )
+      .then( data => {
+
+        setLista( data.ListaEESSPrecio );
+
+      });
+
+  };
 
   useEffect( () => {
 
     if ( lista.length === 0 ) {
 
-      fetch( 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/' )
-        .then( response => response.json() )
-        .then( data => {
-
-          setLista( data.ListaEESSPrecio );
-
-        });
+      getData();
 
     }
+
+    return () => {
+
+      console.log( 'cleanup' );
+
+    };
 
   }, []);
 
@@ -162,11 +174,6 @@ export default function Gasolinera() {
     </div>
   );
 
-}
+};
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Gasolinera />
-  </React.StrictMode>,
-  document.getElementById( 'root' )
-);
+export default Gasolinera;
