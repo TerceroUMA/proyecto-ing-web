@@ -6,7 +6,7 @@ import TrayectosFilter from './TrayectosFilter';
 export const Home = () => {
 
 
-  fetchUrlencoded( 'trayectos' )
+  fetchUrlencoded( 'trayectos?origen=&destino=&precio=&plazasDisponibles=&fechaDeSalida=&idUsuario=' )
     .then( response => response.json() )
     .then( data => {
 
