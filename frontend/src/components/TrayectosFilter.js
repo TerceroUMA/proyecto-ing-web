@@ -9,11 +9,10 @@ export default function TrayectosFilter() {
     destino: '',
     precio: '',
     plazasDisponibles: '',
-    fechaDeSalida: '',
-    horaDeSalida: ''
+    fechaDeSalida: ''
   });
 
-  const { origen, destino, precio, plazasDisponibles, fechaDeSalida, horaDeSalida } = formValues;
+  const { origen, destino, precio, plazasDisponibles, fechaDeSalida } = formValues;
 
   const [show, setShow] = useState( false );
 

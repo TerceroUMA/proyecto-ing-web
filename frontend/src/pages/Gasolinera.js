@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useForm } from '../hooks/useForm';
 
 export const Gasolinera = () => {
@@ -26,12 +25,6 @@ export const Gasolinera = () => {
 
     }
 
-    return () => {
-
-      console.log( 'cleanup' );
-
-    };
-
   }, []);
 
   const [formValues, handleInputChange] = useForm({
@@ -39,11 +32,10 @@ export const Gasolinera = () => {
     destino: '',
     precio: '',
     plazasDisponibles: '',
-    fechaDeSalida: '',
-    horaDeSalida: ''
+    fechaDeSalida: ''
   });
 
-  const { origen, destino, precio, plazasDisponibles, fechaDeSalida, horaDeSalida } = formValues;
+  const { origen, destino, precio, plazasDisponibles, fechaDeSalida } = formValues;
 
   const [show, setShow] = useState( false );
 
@@ -127,16 +119,6 @@ export const Gasolinera = () => {
             name="fechaDeSalida"
             onChange={handleInputChange}
             value={fechaDeSalida}
-          />
-
-          <label htmlFor="horaDeSalida">Hora de salida igual o mayor a:</label>
-          <input
-            className="form-control"
-            type="text"
-            name="horaDeSalida"
-            onChange={handleInputChange}
-            value={horaDeSalida}
-            placeholder="hh:mm"
           />
 
           <button className="btn btn-primary form-control"> Buscar </button>
