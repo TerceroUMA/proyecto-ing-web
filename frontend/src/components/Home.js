@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchUrlencoded } from '../helpers/fetch';
 import '../styles/home.css';
 import TrayectosFilter from './TrayectosFilter';
@@ -20,6 +20,18 @@ export const Home = () => {
       });
 
   };
+
+  useEffect( () => {
+
+    fetchUrlencoded( 'trayectos?origen=&destino=&precio=&plazasDisponibles=&fechaDeSalida=&idUsuario=' )
+      .then( response => response.json() )
+      .then( data => {
+
+        setTrayectos( data.trayectos );
+
+      });
+
+  }, []);
 
   return (
     <div className="home-container">
