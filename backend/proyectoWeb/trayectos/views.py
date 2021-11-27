@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 from django.views import View
 from django.http import QueryDict
 from django.http.response import JsonResponse

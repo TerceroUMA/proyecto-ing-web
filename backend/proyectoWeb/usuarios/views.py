@@ -1,9 +1,7 @@
 from django.views import View
 from django.http import QueryDict
-from django.http.response import HttpResponse, JsonResponse
-import pymongo
+from django.http.response import JsonResponse
 from pymongo import MongoClient
-import json
 import certifi
 import uuid
 import bcrypt
