@@ -96,3 +96,15 @@ export const iniciarSesion = ( correo, password, sendToHome ) => {
   };
 
 };
+
+const logout = {
+  type: types.logout
+};
+
+export const cerrarSesion = () => {
+
+  localStorage.removeItem( 'usuario' );
+
+  return logout;
+
+};
