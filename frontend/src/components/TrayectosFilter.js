@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from '../hooks/useForm';
-import '../styles/trayectos-filter.css';
+import '../styles/components/trayectos-filter.css';
 
 import PropTypes from 'prop-types';
 

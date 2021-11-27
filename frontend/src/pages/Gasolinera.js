@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from '../hooks/useForm';
+import GasolinaFilter from '../components/GasolinaFilter';
+import { fetchUrlencoded } from '../helpers/fetch';
+import '../styles/pages/gasolineras.css';
 
 export const Gasolinera = () => {
 
   const [lista, setLista] = useState([]);
+  const [pagina, setPagina] = useState( 0 );
 
-  const getData = () => {
+  const paginaSiguiente = () => {
 
-    fetch( 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/' )
+    setPagina( p => p + 1 );
+
+  };
+
+  const paginaAnterior = () => {
+
+    setPagina( p => p - 1 );
+
+  };
+
+  const getData = ( provincia, municipio, precio ) => {
+
+    setLista([]);
+
+    fetchUrlencoded( `datos/gasolineras?pagina=${pagina}&provincia=${provincia || ''}&municipio=${municipio || ''}&precio=${precio || ''}` )
       .then( response => response.json() )
       .then( data => {
 
-        setLista( data.ListaEESSPrecio );
+        setLista( data.gasolineras );
 
       });
 
@@ -19,120 +36,45 @@ export const Gasolinera = () => {
 
   useEffect( () => {
 
-    if ( lista.length === 0 ) {
+    setLista([]);
+    getData();
 
-      getData();
-
-    }
-
-  }, []);
-
-  const [formValues, handleInputChange] = useForm({
-    origen: '',
-    destino: '',
-    precio: '',
-    plazasDisponibles: '',
-    fechaDeSalida: ''
-  });
-
-  const { origen, destino, precio, plazasDisponibles, fechaDeSalida } = formValues;
-
-  const [show, setShow] = useState( false );
-
-  const handleShow = () => {
-
-    setShow( s => !s );
-
-  };
+  }, [pagina]);
 
   if ( lista.length === 0 ) {
 
     return (
+      <div className="gasolineras-container" style={{ justifyContent: 'center' }}>
+        <div>
+          <h1>Gasolineras</h1>
+        </div>
 
-      <div className="container">
+        <h1>Página: {pagina + 1}</h1>
 
-        <h1>Cargando...</h1>
-
+        <GasolinaFilter previous={paginaAnterior} next={paginaSiguiente} refrescarDatos={getData} />
+        <h1 style={{ marginTop: '2%' }}>Cargando...</h1>
       </div>
-
     );
 
   }
 
 
   return (
-    <div>
+    <div className="gasolineras-container">
       <div>
-        <h1>Filtros</h1>
+        <h1>Gasolineras</h1>
       </div>
 
-      <button
-        className="btn btn-primary btn-filter"
-        onClick={ handleShow }
-      >
-                  Filtrar
-      </button>
+      <h1>Página: {pagina + 1}</h1>
 
-      <div className={'trayectos-filter ' + ( show ? '' : 'not-show' )}>
-        <h1>Filtros de trayectos</h1>
-        <form>
-          <label htmlFor="origen">Origen:</label>
-          <input
-            className="form-control"
-            type="text"
-            name="origen"
-            onChange={handleInputChange}
-            value={origen}
-          />
+      <GasolinaFilter previous={paginaAnterior} next={paginaSiguiente} refrescarDatos={getData} />
 
-          <label htmlFor="destino">Destino:</label>
-          <input
-            className="form-control"
-            type="text"
-            name="destino"
-            onChange={handleInputChange}
-            value={destino}
-          />
-
-          <label htmlFor="precio">Precio igual o menor a:</label>
-          <input
-            className="form-control"
-            type="number"
-            name="precio"
-            onChange={handleInputChange}
-            value={precio}
-          />
-
-          <label htmlFor="plazasDisponibles">Plazas disponibles igual o mayor a:</label>
-          <input
-            className="form-control"
-            type="number"
-            name="plazasDisponibles"
-            onChange={handleInputChange}
-            value={plazasDisponibles}
-          />
-
-          <label htmlFor="fechaDeSalida">Fecha de salida igual o mayor a:</label>
-          <input
-            className="form-control"
-            type="date"
-            name="fechaDeSalida"
-            onChange={handleInputChange}
-            value={fechaDeSalida}
-          />
-
-          <button className="btn btn-primary form-control"> Buscar </button>
-
-        </form>
-      </div>
-
-      <table className="table">
+      <table className="table" style={{ margin: '0px 5px' }}>
         <thead>
           <tr>
             <th scope="col">Municipio</th>
             <th scope="col">Calle</th>
             <th scope="col">Gasoleo A</th>
-            <th scope="col">Gasoleo B</th>
           </tr>
         </thead>
 
@@ -144,8 +86,7 @@ export const Gasolinera = () => {
                 <tr>
                   <td>{item.Municipio}</td>
                   <td>{item.Dirección}</td>
-                  <td>{item['Precio Gasoleo A']}</td>
-                  <td>{item['Precio Gasoleo B']}</td>
+                  <td>{item['Precio Gasoleo A'] === -1 ? 'No disponible' : item['Precio Gasoleo A']}</td>
                 </tr>
               </tbody>
             );
