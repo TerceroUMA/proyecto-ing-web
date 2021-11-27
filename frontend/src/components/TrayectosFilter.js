@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useForm } from '../hooks/useForm';
 import '../styles/trayectos-filter.css';
 
-export default function TrayectosFilter() {
+import PropTypes from 'prop-types';
+
+export default function TrayectosFilter({ handleRequest }) {
 
   const [formValues, handleInputChange] = useForm({
     origen: '',
@@ -19,6 +21,14 @@ export default function TrayectosFilter() {
   const handleShow = () => {
 
     setShow( s => !s );
+
+  };
+
+  const handleSearch = ( e ) => {
+
+    e.preventDefault();
+
+    handleRequest( formValues );
 
   };
 
@@ -79,7 +89,10 @@ export default function TrayectosFilter() {
             value={fechaDeSalida}
           />
 
-          <button className="btn btn-primary form-control"> Buscar </button>
+          <button
+            className="btn btn-primary form-control"
+            onClick={ handleSearch }
+          > Buscar </button>
 
         </form>
       </div>
@@ -87,4 +100,8 @@ export default function TrayectosFilter() {
 
   );
 
-}
+};
+
+TrayectosFilter.propTypes = {
+  handleRequest: PropTypes.func.isRequired
+};

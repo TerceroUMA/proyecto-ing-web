@@ -55,7 +55,6 @@ export const fetchUrlencoded = ( endpoint, data, method = 'GET' ) => {
 
     formBody = formBody.join( '&' );
 
-
     return fetch( url, {
       method,
       headers: {
