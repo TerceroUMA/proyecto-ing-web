@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from '../hooks/useForm';
 import '../styles/trayectos-filter.css';
 
@@ -15,69 +15,87 @@ export default function TrayectosFilter() {
 
   const { origen, destino, precio, plazasDisponibles, fechaDeSalida, horaDeSalida } = formValues;
 
+  const [show, setShow] = useState( false );
+
+  const handleShow = () => {
+
+    setShow( s => !s );
+
+  };
+
   return (
-    <div className="trayectos-filter">
-      <h1>Filtros de trayectos</h1>
-      <form>
-        <label htmlFor="origen">Origen:</label>
-        <input
-          className="form-control"
-          type="text"
-          name="origen"
-          onChange={handleInputChange}
-          value={origen}
-        />
+    <>
+      <button
+        className="btn btn-primary btn-filter"
+        onClick={ handleShow }
+      >
+        Filtrar
+      </button>
 
-        <label htmlFor="destino">Destino:</label>
-        <input
-          className="form-control"
-          type="text"
-          name="destino"
-          onChange={handleInputChange}
-          value={destino}
-        />
+      <div className={'trayectos-filter ' + ( show ? '' : 'not-show' )}>
+        <h1>Filtros de trayectos</h1>
+        <form>
+          <label htmlFor="origen">Origen:</label>
+          <input
+            className="form-control"
+            type="text"
+            name="origen"
+            onChange={handleInputChange}
+            value={origen}
+          />
 
-        <label htmlFor="precio">Precio igual o menor a:</label>
-        <input
-          className="form-control"
-          type="number"
-          name="precio"
-          onChange={handleInputChange}
-          value={precio}
-        />
+          <label htmlFor="destino">Destino:</label>
+          <input
+            className="form-control"
+            type="text"
+            name="destino"
+            onChange={handleInputChange}
+            value={destino}
+          />
 
-        <label htmlFor="plazasDisponibles">Plazas disponibles igual o mayor a:</label>
-        <input
-          className="form-control"
-          type="number"
-          name="plazasDisponibles"
-          onChange={handleInputChange}
-          value={plazasDisponibles}
-        />
+          <label htmlFor="precio">Precio igual o menor a:</label>
+          <input
+            className="form-control"
+            type="number"
+            name="precio"
+            onChange={handleInputChange}
+            value={precio}
+          />
 
-        <label htmlFor="fechaDeSalida">Fecha de salida igual o mayor a:</label>
-        <input
-          className="form-control"
-          type="date"
-          name="fechaDeSalida"
-          onChange={handleInputChange}
-          value={fechaDeSalida}
-        />
+          <label htmlFor="plazasDisponibles">Plazas disponibles igual o mayor a:</label>
+          <input
+            className="form-control"
+            type="number"
+            name="plazasDisponibles"
+            onChange={handleInputChange}
+            value={plazasDisponibles}
+          />
 
-        <label htmlFor="horaDeSalida">Hora de salida igual o mayor a:</label>
-        <input
-          className="form-control"
-          type="text"
-          name="horaDeSalida"
-          onChange={handleInputChange}
-          value={horaDeSalida}
-          placeholder="hh:mm"
-        />
+          <label htmlFor="fechaDeSalida">Fecha de salida igual o mayor a:</label>
+          <input
+            className="form-control"
+            type="date"
+            name="fechaDeSalida"
+            onChange={handleInputChange}
+            value={fechaDeSalida}
+          />
 
-        <button className="btn btn-primary form-control"> Buscar </button>
+          <label htmlFor="horaDeSalida">Hora de salida igual o mayor a:</label>
+          <input
+            className="form-control"
+            type="text"
+            name="horaDeSalida"
+            onChange={handleInputChange}
+            value={horaDeSalida}
+            placeholder="hh:mm"
+          />
 
-      </form>
-    </div>
+          <button className="btn btn-primary form-control"> Buscar </button>
+
+        </form>
+      </div>
+    </>
+
   );
 
 }

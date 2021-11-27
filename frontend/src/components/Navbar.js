@@ -1,7 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 export default function Navbar() {
+
+  const { uuid } = useSelector( state => state.auth );
+
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -32,21 +36,35 @@ export default function Navbar() {
               </Link>
             </li>
 
-            <li className="nav-item">
-              <Link to="/iniciarSesion"
-                className="nav-link"
-              >
+            {
+              !uuid
+                ? ( <>
+                  <li className="nav-item">
+                    <Link to="/iniciarSesion"
+                      className="nav-link"
+                    >
                 Iniciar sesión
-              </Link>
-            </li>
+                    </Link>
+                  </li>
 
-            <li className="nav-item">
-              <Link to="/registrarse"
-                className="nav-link"
-              >
+                  <li className="nav-item">
+                    <Link to="/registrarse"
+                      className="nav-link"
+                    >
                 Registrarse
-              </Link>
-            </li>
+                    </Link>
+                  </li>
+                </> )
+                : ( <li className="nav-item">
+                  <Link to="/registrarse"
+                    className="nav-link"
+                  >
+                Cerrar sesión
+                  </Link>
+                </li> )
+
+            }
+
 
           </ul>
         </div>

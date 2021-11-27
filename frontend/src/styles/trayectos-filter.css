@@ -19,3 +19,12 @@
 .trayectos-filter > form > button {
   margin-top: 15px;
 }
+
+.not-show {
+  display: none;
+}
+
+.btn-filter {
+  width: 80%;
+  margin-bottom: 20px;
+}

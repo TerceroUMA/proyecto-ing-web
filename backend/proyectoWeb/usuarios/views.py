@@ -1,9 +1,7 @@
 from django.views import View
 from django.http import QueryDict
-from django.http.response import HttpResponse, JsonResponse
-import pymongo
+from django.http.response import JsonResponse
 from pymongo import MongoClient
-import json
 import certifi
 import uuid
 import bcrypt
@@ -26,7 +24,7 @@ class Login(View):
         us = self.users.find_one({"correo": request.POST.get("correo")})
 
         if (us == None):
-            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese correo'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el correo introducido'}, safe=False)
 
         else:
 
@@ -57,7 +55,7 @@ class Users(View):
                                      "_id": 0, "password": 0})
             if us == None:
 
-                return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con ese id'}, safe=False)
+                return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el id introducido'}, safe=False)
 
             return JsonResponse({"ok": True, "usuario": us}, safe=False)
 
@@ -65,16 +63,15 @@ class Users(View):
         elif (request.GET.get("correo") != None):
             lista = []
             for u in self.users.find({}, {"_id": 0, "password": 0}):
-                if(request.GET.get("correo").find(u["correo"]) >= 0 and request.GET.get("uuid") != u["uuid"]):
+                if(u["correo"].find(request.GET.get("correo")) >= 0 and request.GET.get("uuid") != u["uuid"]):
                     lista.append(u)
-
             return JsonResponse({"ok": True, "usuarios": lista}, safe=False)
 
         # Consulta parametrizada por localidad
         else:
             lista = []
             for u in self.users.find({}, {"_id": 0, "password": 0}):
-                if(request.GET.get("localidad").find(u["localidad"]) >= 0 and request.GET.get("uuid") != u["uuid"]):
+                if(u["localidad"].find(request.GET.get("localidad")) >= 0 and request.GET.get("uuid") != u["uuid"]):
                     lista.append(u)
 
             return JsonResponse({"ok": True, "usuarios": lista}, safe=False)
@@ -110,13 +107,13 @@ class Users(View):
             else:
                 return False, JsonResponse({"ok": False, "msg": "El email introducido ya existe"})
 
-    def paramVacio(self,data):
+    def paramVacio(self, data):
         condicionNull = False
         for d in data.values():
             if(d is None or d == ""):
                 condicionNull = True
 
-        return condicionNull, JsonResponse({"ok:": False, "msg": 'Existe algún campo vacío'}, safe=False)
+        return condicionNull, JsonResponse({"ok:": False, "msg": 'No se pueden introducir campos vacíos'}, safe=False)
 
     # Inserta un usuario en la base de datos (Registrarse)
 
@@ -128,7 +125,7 @@ class Users(View):
         hashed = bcrypt.hashpw(data["password"].encode(), salt)
 
         if(not bcrypt.checkpw(data["confirmarPassword"].encode(), hashed)):
-            return JsonResponse({"ok": False, "msg": "Las contraseñas no coinciden"})
+            return JsonResponse({"ok": False, "msg": "Las contraseñas introducidas no coinciden"})
         else:
             vacio, jsonDataVacio = self.paramVacio(data)
             if(not vacio):
@@ -136,19 +133,19 @@ class Users(View):
 
                 ok, jsonData = self.comprobaciones(data, "post")
                 if(ok):
-                    
-                        us = {"uuid": str(uuid.uuid1()), "nombre": data["nombre"], "apellidos": data["apellidos"], "password": hashed,
-                            "edad": data["edad"], "correo": data["correo"], "telefono": data["telefono"], "localidad": data["localidad"]}
 
-                        self.users.insert_one(us)
+                    us = {"uuid": str(uuid.uuid1()), "nombre": data["nombre"], "apellidos": data["apellidos"], "password": hashed,
+                          "edad": data["edad"], "correo": data["correo"], "telefono": data["telefono"], "localidad": data["localidad"]}
 
-                        us = self.users.find_one({"uuid": us["uuid"]}, {
-                                                "_id": 0, "password": 0})
+                    self.users.insert_one(us)
 
-                        return JsonResponse({"ok": True, "usuario": us, "msg": "El usuario se ha registrado con éxito"})   
+                    us = self.users.find_one({"uuid": us["uuid"]}, {
+                        "_id": 0, "password": 0})
+
+                    return JsonResponse({"ok": True, "usuario": us, "msg": "El usuario se ha registrado con éxito"})
                 else:
                     return jsonData
-                
+
             else:
                 return jsonDataVacio
 
@@ -158,7 +155,7 @@ class Users(View):
         filter = {'uuid': data["uuid"]}
 
         if(self.users.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
 
         vacio, jsonDataVacio = self.paramVacio(data)
         if(not vacio):
@@ -166,26 +163,28 @@ class Users(View):
             ok, jsonData = self.comprobaciones(data, "put")
 
             if(ok):
-                
-                    salt = bcrypt.gensalt()
-                    hashed = bcrypt.hashpw(data["password"].encode(), salt)
 
-                    newvalues = {"$set": {'nombre': data["nombre"], 'apellidos': data["apellidos"], 'password': hashed,
-                                        'edad': data["edad"], 'correo': data["correo"], 'telefono': data["telefono"], 'localidad': data["localidad"]}}
-                    self.users.update_one(filter, newvalues)
-                    return JsonResponse({"ok": True})
-                
+                salt = bcrypt.gensalt()
+                hashed = bcrypt.hashpw(data["password"].encode(), salt)
+
+                newvalues = {"$set": {'nombre': data["nombre"], 'apellidos': data["apellidos"], 'password': hashed,
+                                      'edad': data["edad"], 'correo': data["correo"], 'telefono': data["telefono"], 'localidad': data["localidad"]}}
+                self.users.update_one(filter, newvalues)
+                us = self.users.find_one({"uuid": data["uuid"]}, {
+                    "_id": 0, "password": 0})
+                return JsonResponse({"ok": True, "usuario": us})
+
             else:
                 return jsonData
         else:
-                return jsonDataVacio
+            return jsonDataVacio
 
     # Borra al usuario que coincida con el id proporcionado.
     def delete(self, request):
         data = QueryDict(request.body)
         us = self.users.find_one({"uuid": data["uuid"]}, {"_id": 0})
         if us == None:
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con ese id'}, safe=False)
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
 
         self.users.delete_one(us)
         return JsonResponse({"ok": True})

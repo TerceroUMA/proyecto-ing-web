@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { fetchSinToken, fetchUrlencoded } from '../helpers/fetch';
+import { fetchUrlencoded } from '../helpers/fetch';
 import { types } from '../types/types';
 
 const login = ( user ) => ({
