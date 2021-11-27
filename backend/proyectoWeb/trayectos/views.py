@@ -98,12 +98,12 @@ class Trayectos(View):
             if precio == None or precio == "":
                 precio = str(sys.float_info.max)
             elif float(precio) < 0.0:
-                return False, JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
 
             if plazasDisponibles == None or plazasDisponibles == "":
                 plazasDisponibles = "0"
             elif int(plazasDisponibles) < 0:
-                return False, JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
 
             try:
                 if fechaDeSalida == None or fechaDeSalida == "":
@@ -114,10 +114,10 @@ class Trayectos(View):
                     now = datetime.now()
 
                     if(fecha_dt <= now):
-                        return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
+                        return JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
             except ValueError:
-                return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
             lista = list(self.trayectos.find({}, {"_id": 0}))
 
@@ -125,8 +125,8 @@ class Trayectos(View):
                 fecha = t["fechaDeSalida"]
                 fecha_aux = datetime.strptime(fecha, '%Y-%m-%d')
                 condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
-                             float(precio) <= float(t["precio"]) or int(plazasDisponibles) > int(t["plazasDisponibles"]) or
-                             fecha_aux <= fecha_dt)
+                             float(precio) < float(t["precio"]) or int(plazasDisponibles) > int(t["plazasDisponibles"]) or
+                             fecha_aux < fecha_dt)
 
                 if(not (origen == None) and not (origen == "")):
                     condicion = condicion or origen.find(t["origen"]) < 0
@@ -136,7 +136,7 @@ class Trayectos(View):
                     lista.remove(t)
 
             if lista == None:
-                return JsonResponse({"ok": False, "msg": 'No hay trayectos disponibles'}, safe=False)
+                lista = []
 
             return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
