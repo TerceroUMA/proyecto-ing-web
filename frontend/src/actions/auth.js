@@ -30,8 +30,6 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
           }
         });
 
-        data.usuario.uuid = data.usuario.nombre;
-        delete data.usuario.nombre;
         dispatch( login( data.usuario ) );
 
       } else {
@@ -68,7 +66,6 @@ export const iniciarSesion = ( correo, password, sendToHome ) => {
 
     if ( data.ok ) {
 
-      data.usuario.uuid = data.usuario.correo;
       dispatch( login( data.usuario ) );
 
       Swal.fire({
