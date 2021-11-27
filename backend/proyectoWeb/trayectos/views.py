@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 from django.views import View
 from django.http import QueryDict
 from django.http.response import JsonResponse
@@ -98,12 +98,12 @@ class Trayectos(View):
             if precio == None or precio == "":
                 precio = str(sys.float_info.max)
             elif float(precio) < 0.0:
-                return False, JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'El precio no puede ser negativo'}, safe=False)
 
             if plazasDisponibles == None or plazasDisponibles == "":
                 plazasDisponibles = "0"
             elif int(plazasDisponibles) < 0:
-                return False, JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'El número de plazas disponibles no puede ser negativo'}, safe=False)
 
             try:
                 if fechaDeSalida == None or fechaDeSalida == "":
@@ -114,19 +114,20 @@ class Trayectos(View):
                     now = datetime.now()
 
                     if(fecha_dt <= now):
-                        return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
+                        return JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
             except ValueError:
-                return False, JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
+                return JsonResponse({"ok:": False, "msg": 'La fecha no es válida'}, safe=False)
 
             lista = list(self.trayectos.find({}, {"_id": 0}))
 
             for t in self.trayectos.find({}, {"_id": 0}):
+
                 fecha = t["fechaDeSalida"]
                 fecha_aux = datetime.strptime(fecha, '%Y-%m-%d')
                 condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
-                             float(precio) <= float(t["precio"]) or int(plazasDisponibles) > int(t["plazasDisponibles"]) or
-                             fecha_aux <= fecha_dt)
+                             float(precio) < float(t["precio"]) or int(plazasDisponibles) > int(t["plazasDisponibles"]) or
+                             fecha_aux < fecha_dt)
 
                 if(not (origen == None) and not (origen == "")):
                     condicion = condicion or origen.find(t["origen"]) < 0
@@ -134,9 +135,18 @@ class Trayectos(View):
                     condicion = condicion or destino.find(t["destino"]) < 0
                 if condicion:
                     lista.remove(t)
+                else:
+                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    nombre = us["nombre"] + " " + us["apellidos"]
+                    t.update({"conductor" : nombre})
 
             if lista == None:
-                return JsonResponse({"ok": False, "msg": 'No hay trayectos disponibles'}, safe=False)
+                lista = []
+            else:
+                for t in lista:
+                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    nombre = us["nombre"] + " " + us["apellidos"]
+                    t.update({"conductor" : nombre})
 
             return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
@@ -146,6 +156,10 @@ class Trayectos(View):
 
             if tr == None:
                 return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
+
+            us = self.usuarios.find_one({"uuid" : tr["conductor"]}, {"_id" : 0})
+            nombre = us["nombre"] + " " + us["apellidos"]
+            tr.update({"conductor" : nombre})
 
             return JsonResponse({"ok": True, "trayecto": tr}, safe=False)
 
@@ -176,7 +190,7 @@ class Trayectos(View):
                     "duracion": data["duracion"],
                     "precio": data["precio"],
                     "pasajeros": [],
-                    "plazasDisponible": data["plazasDisponibles"],
+                    "plazasDisponibles": data["plazasDisponibles"],
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
                     "periodicidad": data["periodicidad"]
@@ -266,6 +280,8 @@ class TrayectosCreados(View):
             trs = sorted(trs, key=lambda x: x["fechaDeSalida"])
             trs.reverse()
 
+        sorted(trs, key=lambda x : x['fechaDeSalida'])
+
         return JsonResponse({"ok": True, "trayectos": trs}, safe=False)
 
 
@@ -288,6 +304,8 @@ class TrayectosInscritos(View):
         if lista != None:
             lista = sorted(lista, key=lambda x: x["fechaDeSalida"])
             lista.reverse()
+
+        sorted(lista, key=lambda x : x['fechaDeSalida'])
 
         return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
