@@ -20,8 +20,6 @@ export const fetchSinToken = ( endpoint, data, method = 'GET' ) => {
 
   } else {
 
-    console.log( data );
-
     return fetch( url, {
       method,
       headers: {
@@ -56,7 +54,6 @@ export const fetchUrlencoded = ( endpoint, data, method = 'GET' ) => {
     }
 
     formBody = formBody.join( '&' );
-
 
     return fetch( url, {
       method,

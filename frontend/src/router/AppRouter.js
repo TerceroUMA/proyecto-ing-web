@@ -1,14 +1,29 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../components/Home';
 import Navbar from '../components/Navbar';
+import Gasolinera from '../pages/Gasolinera';
 import IniciarSesion from '../pages/IniciarSesion';
 import Registrarse from '../pages/Registrarse';
+import { types } from '../types/types';
 
 export const AppRouter = () => {
 
-  const auth = useSelector( state => state.auth );
+  const dispatch = useDispatch();
+
+  useEffect( () => {
+
+    if ( localStorage.getItem( 'usuario' ) !== null ) {
+
+      dispatch({
+        type: types.login,
+        payload: JSON.parse( localStorage.getItem( 'usuario' ) )
+      });
+
+    }
+
+  }, []);
 
   return (
     <Router>
@@ -20,6 +35,9 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
+          <Route path="/datosAbiertos/gasolineras">
+            <Gasolinera />
+          </Route>
           <Route path="/iniciarSesion">
             <IniciarSesion />
           </Route>

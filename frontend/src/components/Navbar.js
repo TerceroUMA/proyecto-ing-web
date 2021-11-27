@@ -1,11 +1,18 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { cerrarSesion } from '../actions/auth';
 
 export default function Navbar() {
 
   const { uuid } = useSelector( state => state.auth );
+  const dispatch = useDispatch();
 
+  const logout = () => {
+
+    dispatch( cerrarSesion() );
+
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -36,6 +43,14 @@ export default function Navbar() {
               </Link>
             </li>
 
+            <li className="nav-item">
+              <Link to="/datosAbiertos/gasolineras"
+                className="nav-link"
+              >
+                Datos abiertos
+              </Link>
+            </li>
+
             {
               !uuid
                 ? ( <>
@@ -43,7 +58,7 @@ export default function Navbar() {
                     <Link to="/iniciarSesion"
                       className="nav-link"
                     >
-                Iniciar sesión
+                      Iniciar sesión
                     </Link>
                   </li>
 
@@ -51,21 +66,20 @@ export default function Navbar() {
                     <Link to="/registrarse"
                       className="nav-link"
                     >
-                Registrarse
+                      Registrarse
                     </Link>
                   </li>
                 </> )
                 : ( <li className="nav-item">
                   <Link to="/registrarse"
                     className="nav-link"
+                    onClick={ logout }
                   >
-                Cerrar sesión
+                      Cerrar sesión
                   </Link>
                 </li> )
 
             }
-
-
           </ul>
         </div>
       </div>

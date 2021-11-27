@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
 import { useForm } from '../hooks/useForm';
-import '../styles/trayectos-filter.css';
+import '../styles/components/trayectos-filter.css';
 
-export default function TrayectosFilter() {
+import PropTypes from 'prop-types';
+
+export default function TrayectosFilter({ handleRequest }) {
 
   const [formValues, handleInputChange] = useForm({
     origen: '',
     destino: '',
     precio: '',
     plazasDisponibles: '',
-    fechaDeSalida: '',
-    horaDeSalida: ''
+    fechaDeSalida: ''
   });
 
-  const { origen, destino, precio, plazasDisponibles, fechaDeSalida, horaDeSalida } = formValues;
+  const { origen, destino, precio, plazasDisponibles, fechaDeSalida } = formValues;
 
   const [show, setShow] = useState( false );
 
   const handleShow = () => {
 
     setShow( s => !s );
+
+  };
+
+  const handleSearch = ( e ) => {
+
+    e.preventDefault();
+
+    handleRequest( formValues );
 
   };
 
@@ -80,17 +89,10 @@ export default function TrayectosFilter() {
             value={fechaDeSalida}
           />
 
-          <label htmlFor="horaDeSalida">Hora de salida igual o mayor a:</label>
-          <input
-            className="form-control"
-            type="text"
-            name="horaDeSalida"
-            onChange={handleInputChange}
-            value={horaDeSalida}
-            placeholder="hh:mm"
-          />
-
-          <button className="btn btn-primary form-control"> Buscar </button>
+          <button
+            className="btn btn-primary form-control"
+            onClick={ handleSearch }
+          > Buscar </button>
 
         </form>
       </div>
@@ -98,4 +100,8 @@ export default function TrayectosFilter() {
 
   );
 
-}
+};
+
+TrayectosFilter.propTypes = {
+  handleRequest: PropTypes.func.isRequired
+};
