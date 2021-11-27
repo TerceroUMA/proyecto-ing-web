@@ -134,7 +134,11 @@ class Trayectos(View):
                 if(not (destino == None) and not (destino == "")):
                     condicion = condicion or destino.find(t["destino"]) < 0
                 if condicion:
-                    lista.remove(t)                    
+                    lista.remove(t)
+                else:
+                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    nombre = us["nombre"] + " " + us["apellidos"]
+                    t.update({"conductor" : nombre})
 
             if lista == None:
                 lista = []
