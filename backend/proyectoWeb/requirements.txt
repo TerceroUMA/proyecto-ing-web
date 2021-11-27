@@ -4,3 +4,4 @@ pymongo
 dnspython pymongo certifi
 bcrypt
 django-cors-headers
+requests
