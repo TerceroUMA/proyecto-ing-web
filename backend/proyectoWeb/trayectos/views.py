@@ -122,6 +122,7 @@ class Trayectos(View):
             lista = list(self.trayectos.find({}, {"_id": 0}))
 
             for t in self.trayectos.find({}, {"_id": 0}):
+
                 fecha = t["fechaDeSalida"]
                 fecha_aux = datetime.strptime(fecha, '%Y-%m-%d')
                 condicion = (t["conductor"] == usuarioConectado or usuarioConectado in list(t["pasajeros"]) or
@@ -134,6 +135,10 @@ class Trayectos(View):
                     condicion = condicion or destino.find(t["destino"]) < 0
                 if condicion:
                     lista.remove(t)
+                else:
+                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    nombre = us["nombre"] + " " + us["apellidos"]
+                    t.update({"conductor" : nombre})
 
             if lista == None:
                 lista = []
@@ -146,6 +151,10 @@ class Trayectos(View):
 
             if tr == None:
                 return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
+
+            us = self.usuarios.find_one({"uuid" : tr["conductor"]}, {"_id" : 0})
+            nombre = us["nombre"] + " " + us["apellidos"]
+            tr.update({"conductor" : nombre})
 
             return JsonResponse({"ok": True, "trayecto": tr}, safe=False)
 
