@@ -32,6 +32,13 @@ const IniciarSesion = () => {
 
   };
 
+  const isAuthenticated = localStorage.getItem( 'usuario' ) !== null;
+  if ( isAuthenticated ) {
+
+    history.push( '/' );
+
+  }
+
   return (
     <div className="auth__container">
       <h1 className="auth__title">

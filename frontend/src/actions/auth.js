@@ -30,6 +30,8 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
           }
         });
 
+        localStorage.setItem( 'usuario', JSON.stringify( data.usuario ) );
+
         dispatch( login( data.usuario ) );
 
       } else {
@@ -68,6 +70,8 @@ export const iniciarSesion = ( correo, password, sendToHome ) => {
 
       dispatch( login( data.usuario ) );
 
+      localStorage.setItem( 'usuario', JSON.stringify( data.usuario ) );
+
       Swal.fire({
         title: 'Bienvenido',
         text: data.msg,
@@ -103,7 +107,7 @@ const logout = {
 
 export const cerrarSesion = () => {
 
-  localStorage.removeItem( 'usuario' );
+  localStorage.clear();
 
   return logout;
 
