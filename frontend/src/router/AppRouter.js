@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../components/Home';
 import Navbar from '../components/Navbar';
 import Gasolinera from '../pages/Gasolinera';
+import Coches from '../pages/Coches';
 import IniciarSesion from '../pages/IniciarSesion';
 import Registrarse from '../pages/Registrarse';
 import TrayectoID from '../pages/TrayectoID';
@@ -45,6 +46,9 @@ export const AppRouter = () => {
           </Route>
           <Route path="/datosAbiertos/gasolineras">
             <Gasolinera />
+          </Route>
+          <Route path="/datosAbiertos/coches">
+            <Coches />
           </Route>
           <Route path="/iniciarSesion">
             <IniciarSesion />
