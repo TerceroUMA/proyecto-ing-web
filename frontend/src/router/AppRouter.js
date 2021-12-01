@@ -6,6 +6,8 @@ import Navbar from '../components/Navbar';
 import Gasolinera from '../pages/Gasolinera';
 import IniciarSesion from '../pages/IniciarSesion';
 import Registrarse from '../pages/Registrarse';
+import TrayectoID from '../pages/TrayectoID';
+import TrayectosCreados from '../pages/TrayectosCreados';
 import { types } from '../types/types';
 
 export const AppRouter = () => {
@@ -35,6 +37,12 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
+          <Route path="/trayectos/:idTrayecto">
+            <TrayectoID />
+          </Route>
+          <Route path="/trayectosCreados">
+            <TrayectosCreados />
+          </Route>
           <Route path="/datosAbiertos/gasolineras">
             <Gasolinera />
           </Route>

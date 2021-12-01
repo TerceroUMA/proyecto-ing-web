@@ -5,11 +5,13 @@ import TrayectosFilter from './TrayectosFilter';
 
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 
 export const Home = () => {
 
   const [trayectos, setTrayectos] = useState([]);
   const { uuid } = useSelector( state => state.auth );
+  const history = useHistory();
 
   const getDatos = ({ origen, destino, precio, plazasDisponibles, fechaDeSalida }) => {
 
@@ -35,6 +37,12 @@ export const Home = () => {
 
   }, []);
 
+  const handleVerTrayecto = ( idTrayecto ) => {
+
+    history.push( `/trayectos/${idTrayecto}` );
+
+  };
+
   return (
     <div className="home-container">
       <h1>Trayectos</h1>
@@ -59,6 +67,7 @@ export const Home = () => {
                   <p><strong>Hora de salida:</strong> {horaDeSalida}</p>
                   <p><strong>Tipo de vehículo:</strong> {tipoDeVehiculo}</p>
                   <p><strong>Periodicidad:</strong> {periodicidad} días</p>
+                  <button className="btn btn-success" onClick={() => handleVerTrayecto( uuidTrayecto ) }> Acceder </button>
                 </div>
               </div>
             </div>
