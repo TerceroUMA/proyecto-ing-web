@@ -45,6 +45,13 @@ const Registrarse = () => {
 
   };
 
+  const isAuthenticated = localStorage.getItem( 'usuario' ) !== null;
+  if ( isAuthenticated ) {
+
+    history.push( '/' );
+
+  }
+
 
   return (
     <div className="auth__container">
