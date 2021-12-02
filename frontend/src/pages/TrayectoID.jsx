@@ -85,6 +85,12 @@ export default function TrayectoID() {
 
   };
 
+  const handleListarUsuariosTrayectos = ( idTrayecto ) => {
+
+    history.push( `/trayectos/${idTrayecto}/participantes` );
+
+  };
+
   if ( noExiste ) {
 
     return (
@@ -94,8 +100,6 @@ export default function TrayectoID() {
     );
 
   }
-
-  console.log( trayecto );
 
   return (
     <div>
@@ -116,16 +120,28 @@ export default function TrayectoID() {
               <p><strong>Tipo de vehículo:</strong> {trayecto.tipoDeVehiculo}</p>
               <p><strong>Periodicidad:</strong> {trayecto.periodicidad} días</p>
 
-              <p>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 {
                   pasajeros.filter( p => p === uuid ).length === 0
                     ? (
-                      <button
-                        className="btn btn-success"
-                        onClick={handleInscribrise}
-                      >
-                    Inscribirse
-                      </button>
+                      trayecto.plazasDisponibles !== '0'
+                        ? (
+                          <button
+                            className="btn btn-success"
+                            onClick={handleInscribrise}
+                          >
+                      Inscribirse
+                          </button>
+                        )
+                        : (
+                          <button
+                            className="btn btn-success"
+                            disabled
+                          >
+                      Inscribirse
+                          </button>
+                        )
+
                     )
                     : (
                       <button
@@ -137,8 +153,8 @@ export default function TrayectoID() {
                     )
                 }
 
-                <button className="btn btn-warning"> Pasajeros </button>
-              </p>
+                <button className="btn btn-warning" onClick={() => handleListarUsuariosTrayectos( idTrayecto ) } > Pasajeros </button>
+              </div>
             </div>
           </div>
         </div>

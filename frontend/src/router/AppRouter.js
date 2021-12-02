@@ -10,6 +10,7 @@ import TrayectoID from '../pages/TrayectoID';
 import TrayectosCreados from '../pages/TrayectosCreados';
 import UsuarioID from '../pages/UsuarioID';
 import { types } from '../types/types';
+import ListaParticipantes from '../pages/ListaParticipantes';
 
 export const AppRouter = () => {
 
@@ -40,6 +41,9 @@ export const AppRouter = () => {
         <Switch>
           <Route path="/user">
             <UsuarioID />
+          </Route>
+          <Route path="/trayectos/:idTrayecto/participantes">
+            <ListaParticipantes />
           </Route>
           <Route path="/trayectos/:idTrayecto">
             <TrayectoID />
