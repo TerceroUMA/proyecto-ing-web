@@ -8,6 +8,7 @@ import IniciarSesion from '../pages/IniciarSesion';
 import Registrarse from '../pages/Registrarse';
 import TrayectoID from '../pages/TrayectoID';
 import TrayectosCreados from '../pages/TrayectosCreados';
+import UsuarioID from '../pages/UsuarioID';
 import { types } from '../types/types';
 
 export const AppRouter = () => {
@@ -37,6 +38,9 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
+          <Route path="/user">
+            <UsuarioID />
+          </Route>
           <Route path="/trayectos/:idTrayecto">
             <TrayectoID />
           </Route>

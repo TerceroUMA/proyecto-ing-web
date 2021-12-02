@@ -10,24 +10,26 @@ export default function TrayectoID() {
   const { uuid } = useSelector( state => state.auth );
   const history = useHistory();
   const [hayDatos, setHayDatos] = useState( false );
-  const [trayecto, setTrayecto] = useState([]);
+  const [trayecto, setTrayecto] = useState({});
   const [noExiste, setNoExiste] = useState( false );
   const url = history.location.pathname;
   const idTrayecto = url.split( '/' )[2];
+  const [pasajeros, setPasajeros] = useState([]); ;
+  const [contador, setContador] = useState( 0 );
 
   useEffect( async () => {
 
-    if ( uuid ) {
+    if ( idTrayecto ) {
 
       const respuesta = await fetchUrlencoded( `trayectos?uuid=${idTrayecto}` );
       const body = await respuesta.json();
       setHayDatos( true );
-      console.log( body );
 
 
       if ( body.ok ) {
 
         setTrayecto( body.trayecto );
+        setPasajeros( body.trayecto.pasajeros );
 
       } else {
 
@@ -38,7 +40,7 @@ export default function TrayectoID() {
     }
 
 
-  }, [uuid]);
+  }, [idTrayecto, contador]);
 
   if ( !hayDatos ) {
 
@@ -58,6 +60,27 @@ export default function TrayectoID() {
 
       Swal.fire( 'Error', body.msg, 'error' );
 
+    } else {
+
+      setContador( c => c + 1 );
+
+    }
+
+  };
+
+  const handleDesinscribrise = async() => {
+
+    const respuesta = await fetchUrlencoded( 'trayectos/desinscribir', { uuid: idTrayecto, idUsuario: uuid }, 'POST' );
+    const body = await respuesta.json();
+
+    if ( !body.ok ) {
+
+      Swal.fire( 'Error', body.msg, 'error' );
+
+    } else {
+
+      setContador( c => c + 1 );
+
     }
 
   };
@@ -71,6 +94,8 @@ export default function TrayectoID() {
     );
 
   }
+
+  console.log( trayecto );
 
   return (
     <div>
@@ -90,7 +115,30 @@ export default function TrayectoID() {
               <p><strong>Hora de salida:</strong> {trayecto.horaDeSalida}</p>
               <p><strong>Tipo de vehículo:</strong> {trayecto.tipoDeVehiculo}</p>
               <p><strong>Periodicidad:</strong> {trayecto.periodicidad} días</p>
-              <button className="btn btn-success" onClick={handleInscribrise}> Inscribirse </button>
+
+              <p>
+                {
+                  pasajeros.filter( p => p === uuid ).length === 0
+                    ? (
+                      <button
+                        className="btn btn-success"
+                        onClick={handleInscribrise}
+                      >
+                    Inscribirse
+                      </button>
+                    )
+                    : (
+                      <button
+                        className="btn btn-danger"
+                        onClick={handleDesinscribrise}
+                      >
+                    Desinscribirse
+                      </button>
+                    )
+                }
+
+                <button className="btn btn-warning"> Pasajeros </button>
+              </p>
             </div>
           </div>
         </div>
