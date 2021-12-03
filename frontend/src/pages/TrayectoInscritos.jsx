@@ -2,21 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchUrlencoded } from '../helpers/fetch';
 import moment from 'moment';
+import { useHistory } from 'react-router';
 
 export default function TrayectosCreados() {
 
+  const history = useHistory();
   const { uuid } = useSelector( state => state.auth );
   const [hayDatos, setHayDatos] = useState( false );
   const [trayectos, setTrayectos] = useState([]);
+
 
   useEffect( async () => {
 
     if ( uuid ) {
 
-      const respuesta = await fetchUrlencoded( `trayectos/${uuid}` );
+      const respuesta = await fetchUrlencoded( `trayectos/inscribir/${uuid}` );
       const body = await respuesta.json();
       setHayDatos( true );
-      setTrayectos( body.trayectos );
+
+      if ( body.ok ) {
+
+        setTrayectos( body.trayectos );
+        const trConductor = [];
+
+        for ( let p = 0; p < body.trayectos.length; p++ ) {
+
+          trConductor[p] = body.trayectos[p];
+          const respuesta = await fetchUrlencoded( `users?uuid=${body.trayectos[p].conductor}` );
+          const aux = await respuesta.json();
+
+          trConductor[p].conductor = aux.usuario.nombre + ' ' + aux.usuario.apellidos;
+
+        };
+
+        setTrayectos( trConductor );
+
+      }
 
 
     }
@@ -33,6 +54,12 @@ export default function TrayectosCreados() {
 
   }
 
+  const handleVerTrayecto = ( idTrayecto ) => {
+
+    history.push( `/trayectos/${idTrayecto}` );
+
+  };
+
   return (
     <div>
       {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (
@@ -44,7 +71,7 @@ export default function TrayectosCreados() {
               <h2>{origen} - {destino}</h2>
 
               <div className="trayecto-info-datos">
-
+                <p><strong>Conductor:</strong> {conductor} </p>
                 <p><strong>Precio:</strong> {precio}€</p>
                 <p><strong>Duración:</strong> {duracion} minutos</p>
                 <p><strong>Plazas disponibles:</strong> {plazasDisponibles}</p>
@@ -52,6 +79,9 @@ export default function TrayectosCreados() {
                 <p><strong>Hora de salida:</strong> {horaDeSalida}</p>
                 <p><strong>Tipo de vehículo:</strong> {tipoDeVehiculo}</p>
                 <p><strong>Periodicidad:</strong> {periodicidad} días</p>
+
+                <button className="btn btn-success" onClick={() => handleVerTrayecto( uuidTrayecto ) }> Acceder </button>
+
               </div>
             </div>
           </div>
@@ -60,5 +90,5 @@ export default function TrayectosCreados() {
     </div>
   );
 
-}
+};
 

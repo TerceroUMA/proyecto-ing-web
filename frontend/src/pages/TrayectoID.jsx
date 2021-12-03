@@ -15,7 +15,6 @@ export default function TrayectoID() {
   const url = history.location.pathname;
   const idTrayecto = url.split( '/' )[2];
   const [pasajeros, setPasajeros] = useState([]); ;
-  const [contador, setContador] = useState( 0 );
 
   useEffect( async () => {
 
@@ -40,7 +39,7 @@ export default function TrayectoID() {
     }
 
 
-  }, [idTrayecto, contador]);
+  }, [idTrayecto]);
 
   if ( !hayDatos ) {
 
@@ -60,11 +59,9 @@ export default function TrayectoID() {
 
       Swal.fire( 'Error', body.msg, 'error' );
 
-    } else {
-
-      setContador( c => c + 1 );
-
     }
+
+    history.push( '/trayectosInscritos' );
 
   };
 
@@ -77,11 +74,9 @@ export default function TrayectoID() {
 
       Swal.fire( 'Error', body.msg, 'error' );
 
-    } else {
-
-      setContador( c => c + 1 );
-
     }
+
+    history.push( '/' );
 
   };
 
@@ -138,7 +133,7 @@ export default function TrayectoID() {
                             className="btn btn-success"
                             disabled
                           >
-                      Inscribirse
+                      No hay plazas Disponibles
                           </button>
                         )
 
