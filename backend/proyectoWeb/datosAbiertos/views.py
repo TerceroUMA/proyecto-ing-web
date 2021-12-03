@@ -58,7 +58,8 @@ class DatosGasolineras(View):
         distributionsJson = json.loads(distributions)
 
         for dist in distributionsJson['result']['items']:
-            if dist['_about'] == "https://datos.gob.es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas/resource/c0ea7e08-dd2d-4a4e-9013-ea3cbb5105d2":
+            print(dist)
+            if dist['_about'] == "https://datos.gob.es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas/resource/91717348-aa8a-48cc-813e-2b1a8bd4fa9a":
                 url = dist['accessURL']
 
         gasolineras = requests.get(url).text
