@@ -4,8 +4,11 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../components/Home';
 import Navbar from '../components/Navbar';
 import Gasolinera from '../pages/Gasolinera';
+import Coches from '../pages/Coches';
 import IniciarSesion from '../pages/IniciarSesion';
 import Registrarse from '../pages/Registrarse';
+import TrayectoID from '../pages/TrayectoID';
+import TrayectosCreados from '../pages/TrayectosCreados';
 import { types } from '../types/types';
 
 export const AppRouter = () => {
@@ -35,8 +38,17 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
+          <Route path="/trayectos/:idTrayecto">
+            <TrayectoID />
+          </Route>
+          <Route path="/trayectosCreados">
+            <TrayectosCreados />
+          </Route>
           <Route path="/datosAbiertos/gasolineras">
             <Gasolinera />
+          </Route>
+          <Route path="/datosAbiertos/coches">
+            <Coches />
           </Route>
           <Route path="/iniciarSesion">
             <IniciarSesion />
