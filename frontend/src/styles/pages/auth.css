@@ -6,7 +6,6 @@
   justify-content: center;
   height: calc(100vh - var(--navbar-height));
   width: 100vw;
-
 }
 
 .auth__title {
@@ -25,3 +24,4 @@
 .sigIn__option:not(:last-child) {
   margin-bottom: 1rem;
 }
+

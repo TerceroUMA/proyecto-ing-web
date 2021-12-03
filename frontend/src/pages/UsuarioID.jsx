@@ -15,7 +15,6 @@ export default function UsuarioID() {
       const respuesta = await fetchUrlencoded( `users?uuid=${uuid}` );
       const body = await respuesta.json();
       setHayDatos( true );
-      console.log( body );
 
       if ( body.ok ) {
 
