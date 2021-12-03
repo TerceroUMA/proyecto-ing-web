@@ -28,3 +28,14 @@
   width: 80%;
   margin-bottom: 20px;
 }
+
+@media (min-width: 768px) {
+  
+  .trayectos-filter {
+    width: 50%;
+  }
+
+  .btn-filter {
+    width: 50%;
+  }
+}
