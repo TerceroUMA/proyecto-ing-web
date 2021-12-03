@@ -36,7 +36,6 @@ export const fetchSinToken = ( endpoint, data, method = 'GET' ) => {
 export const fetchUrlencoded = ( endpoint, data, method = 'GET' ) => {
 
   const url = `${baseUrl}/${endpoint}`;
-  console.log( url );
 
   if ( method === 'GET' ) {
 
