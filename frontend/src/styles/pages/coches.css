@@ -1,50 +1,24 @@
-<<<<<<< HEAD
 .coches-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
   
-  .coches-container > div > h1 {
-    margin: 20px 0;
-    line-height: 1.5;
-    font-size: 2.5rem;
-    font-weight: bold;
-  }
+.coches-container > div > h1 {
+  margin: 20px 0;
+  line-height: 1.5;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
   
-  .paginas-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+.paginas-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
   
-  .paginas-container button {
-    width: 39%;
-    margin: 1%;
-=======
-.coches-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .coches-container > div > h1 {
-    margin: 20px 0;
-    line-height: 1.5;
-    font-size: 2.5rem;
-    font-weight: bold;
-  }
-  
-  .paginas-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .paginas-container button {
-    width: 39%;
-    margin: 1%;
->>>>>>> Alex
-  }
+.paginas-container button {
+  width: 39%;
+  margin: 1%;
+}
