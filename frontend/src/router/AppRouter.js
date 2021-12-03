@@ -12,6 +12,7 @@ import TrayectosCreados from '../pages/TrayectosCreados';
 import UsuarioID from '../pages/UsuarioID';
 import { types } from '../types/types';
 import ListaParticipantes from '../pages/ListaParticipantes';
+import TrayectosInscritos from '../pages/TrayectoInscritos';
 
 export const AppRouter = () => {
 
@@ -48,6 +49,9 @@ export const AppRouter = () => {
           </Route>
           <Route path="/trayectos/:idTrayecto">
             <TrayectoID />
+          </Route>
+          <Route path="/trayectosInscritos">
+            <TrayectosInscritos />
           </Route>
           <Route path="/trayectosCreados">
             <TrayectosCreados />
