@@ -52,15 +52,8 @@ class DatosGasolineras(View):
         self.resultados = 10
 
         # Conjunto de gasolineras españolas
-
-        distributions = requests.get(
-            'http://datos.gob.es/apidata/catalog/distribution/dataset/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas').text
-        distributionsJson = json.loads(distributions)
-
-        for dist in distributionsJson['result']['items']:
-            print(dist)
-            if dist['_about'] == "https://datos.gob.es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas/resource/91717348-aa8a-48cc-813e-2b1a8bd4fa9a":
-                url = dist['accessURL']
+        
+        url = 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/'
 
         gasolineras = requests.get(url).text
         self.gasolinerasJson = json.loads(gasolineras)

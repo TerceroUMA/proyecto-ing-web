@@ -70,14 +70,32 @@ export default function Navbar() {
                     </Link>
                   </li>
                 </> )
-                : ( <li className="nav-item">
-                  <Link to="/registrarse"
-                    className="nav-link"
-                    onClick={ logout }
-                  >
-                      Cerrar sesión
-                  </Link>
-                </li> )
+                : ( <>
+                  <li className="nav-item">
+                    <Link to="/registrarse"
+                      className="nav-link"
+                      onClick={ logout }
+                    >
+                        Cerrar sesión
+                    </Link>
+                  </li>
+
+                  <li className="nav-item">
+                    <Link to="/trayectosCreados"
+                      className="nav-link"
+                    >
+                      Mis Trayectos
+                    </Link>
+                  </li>
+
+                  <li className="nav-item">
+                    <Link to="/trayectosInscritos"
+                      className="nav-link"
+                    >
+                      Soy Pasajero
+                    </Link>
+                  </li>
+                </> )
 
             }
           </ul>
