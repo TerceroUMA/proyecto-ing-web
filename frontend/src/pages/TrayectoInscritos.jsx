@@ -54,6 +54,15 @@ export default function TrayectosCreados() {
 
   }
 
+  if ( trayectos.length === 0 ) {
+
+    return (
+      <div className="trayectos-container" >
+        <h1> No estás inscrito en ningún viaje </h1>
+      </div> );
+
+  }
+
   const handleVerTrayecto = ( idTrayecto ) => {
 
     history.push( `/trayectos/${idTrayecto}` );

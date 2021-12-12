@@ -22,13 +22,13 @@ export default function ListaParticipantes() {
       const respuesta = await fetchUrlencoded( `trayectos?uuid=${idTrayecto}` );
       const body = await respuesta.json();
       setHayDatos( true );
+      console.log( body );
 
 
       if ( body.ok ) {
 
 
         setTrayecto( body.trayecto );
-        setPasajeros( body.trayecto.pasajeros );
 
         const arr = [];
         for ( let p = 0; p < body.trayecto.pasajeros.length; p++ ) {
@@ -82,20 +82,25 @@ export default function ListaParticipantes() {
 
   return (
     <div>
-      <div className="trayecto-info-datos">
-        <h2> Conductor: </h2>
-        <p>{trayecto.conductor} </p>
-        <h2>Pasajeros: </h2>
-        {
-          pasajeros.map( paja => (
+      <div className="trayectos-container">
+        <div className="trayecto">
+          <div className="trayecto-info-datos">
+            <h2> Conductor: </h2>
+            <button type="button" className="btn btn-link"> {trayecto.conductor} </button>
+          </div>
+          <div className="trayecto-info-datos">
+            <h2>Pasajeros: </h2>
+            {
+              pasajeros.map( k => (
 
-            <p key={paja}> {paja} </p>
+                <p key={k}> <button type="button" className="btn btn-link"> {k} </button> </p>
 
-          ) )
-        }
-        <button className="btn btn-success" onClick={() => handleVolver( idTrayecto ) }> Volver </button>
+              ) )
+            }
+            <button className="btn btn-success" onClick={() => handleVolver( idTrayecto ) }> Volver </button>
+          </div>
+        </div>
       </div>
-
     </div>
   );
 

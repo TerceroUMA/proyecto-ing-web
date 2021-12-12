@@ -72,3 +72,10 @@
     margin: 10px 10px;
   }
 }
+
+.usuario-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
