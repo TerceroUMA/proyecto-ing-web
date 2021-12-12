@@ -33,7 +33,7 @@ export default function UsuarioID() {
   if ( !hayDatos ) {
 
     return (
-      <div className="trayecto-container" >
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <h1> Cargando... </h1>
       </div> );
 
@@ -43,7 +43,7 @@ export default function UsuarioID() {
   if ( !usuario ) {
 
     return (
-      <div className="trayecto-container" >
+      <div style={{ display: 'flex', justifyContent: 'center' }} >
         <h1> No existe este Usuario </h1>
       </div>
     );
