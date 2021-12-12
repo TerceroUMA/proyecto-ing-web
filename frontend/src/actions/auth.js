@@ -25,7 +25,7 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
       formData.append( 'imagen', file );
 
       /* const respuesta = await fetchUrlencoded( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' ); */
-      const respuesta = fetchFormData( 'users', formData, 'POST' );
+      const respuesta = await fetchFormData( 'users', formData, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {
@@ -62,6 +62,8 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
       }
 
     } catch ( error ) {
+
+      console.log( error );
 
       Swal.fire( 'Error', 'Ha ocurrido algún error con el servidor', 'error' );
 

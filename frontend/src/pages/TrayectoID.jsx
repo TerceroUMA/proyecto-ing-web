@@ -76,7 +76,7 @@ export default function TrayectoID() {
 
     }
 
-    history.push( '/' );
+    history.push( '/trayectosInscritos' );
 
   };
 

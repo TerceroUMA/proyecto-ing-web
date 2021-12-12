@@ -7,3 +7,5 @@ certifi
 bcrypt
 django-cors-headers
 requests
+uuid
+cloudinary
