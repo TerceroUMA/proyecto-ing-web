@@ -7,6 +7,10 @@ import certifi
 import uuid
 import sys
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # Create your views here.
 
 
@@ -136,17 +140,19 @@ class Trayectos(View):
                 if condicion:
                     lista.remove(t)
                 else:
-                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    us = self.usuarios.find_one(
+                        {"uuid": t["conductor"]}, {"_id": 0})
                     nombre = us["nombre"] + " " + us["apellidos"]
-                    t.update({"conductor" : nombre})
+                    t.update({"conductor": nombre})
 
             if lista == None:
                 lista = []
             else:
                 for t in lista:
-                    us = self.usuarios.find_one({"uuid" : t["conductor"]}, {"_id" : 0})
+                    us = self.usuarios.find_one(
+                        {"uuid": t["conductor"]}, {"_id": 0})
                     nombre = us["nombre"] + " " + us["apellidos"]
-                    t.update({"conductor" : nombre})
+                    t.update({"conductor": nombre})
 
             return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
@@ -157,9 +163,9 @@ class Trayectos(View):
             if tr == None:
                 return JsonResponse({"ok": False, "msg": 'No se encuentra ningún trayecto con el id introducido'}, safe=False)
 
-            us = self.usuarios.find_one({"uuid" : tr["conductor"]}, {"_id" : 0})
+            us = self.usuarios.find_one({"uuid": tr["conductor"]}, {"_id": 0})
             nombre = us["nombre"] + " " + us["apellidos"]
-            tr.update({"conductor" : nombre})
+            tr.update({"conductor": nombre})
 
             return JsonResponse({"ok": True, "trayecto": tr}, safe=False)
 
@@ -173,13 +179,29 @@ class Trayectos(View):
         return condicionNull, JsonResponse({"ok:": False, "msg": 'Existe algún campo vacío'}, safe=False)
 
     def post(self, request):
-        data = QueryDict(request.body)
+        data = request.POST.dict()
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):
             exito, jsonData = self.comprobaciones(data)
 
             if(exito):
+
+                img = request.FILES['imagen']
+                if img == None:
+                    url = ""
+                else:
+                    
+                    cloudinary.config(
+                    cloud_name="dotshh7i8",
+                    api_key="131739146615866",
+                    api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
+                    )
+
+
+                    res = cloudinary.uploader.upload(img)
+
+                    url = res["url"]
 
                 tr = {
                     "uuid": str(uuid.uuid1()),
@@ -193,7 +215,8 @@ class Trayectos(View):
                     "plazasDisponibles": data["plazasDisponibles"],
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
-                    "periodicidad": data["periodicidad"]
+                    "periodicidad": data["periodicidad"],
+                    "imagen": url
                 }
 
                 self.trayectos.insert_one(tr)
@@ -280,7 +303,7 @@ class TrayectosCreados(View):
             trs = sorted(trs, key=lambda x: x["fechaDeSalida"])
             trs.reverse()
 
-        sorted(trs, key=lambda x : x['fechaDeSalida'])
+        sorted(trs, key=lambda x: x['fechaDeSalida'])
 
         return JsonResponse({"ok": True, "trayectos": trs}, safe=False)
 
@@ -305,7 +328,7 @@ class TrayectosInscritos(View):
             lista = sorted(lista, key=lambda x: x["fechaDeSalida"])
             lista.reverse()
 
-        sorted(lista, key=lambda x : x['fechaDeSalida'])
+        sorted(lista, key=lambda x: x['fechaDeSalida'])
 
         return JsonResponse({"ok": True, "trayectos": lista}, safe=False)
 
