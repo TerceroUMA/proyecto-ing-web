@@ -1,5 +1,4 @@
-import { fetchFormData, fetchSinToken, fetchUrlencoded } from '../helpers/fetch';
-import { useHistory } from 'react-router-dom';
+import { fetchFormData, fetchUrlencoded } from '../helpers/fetch';
 import Swal from 'sweetalert2';
 
 export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, SendToTrayectosCreados ) => {
