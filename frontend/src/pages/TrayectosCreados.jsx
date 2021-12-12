@@ -33,6 +33,15 @@ export default function TrayectosCreados() {
 
   }
 
+  if ( trayectos.length === 0 ) {
+
+    return (
+      <div className="trayectos-container" >
+        <h1> No has creado ningún viaje </h1>
+      </div> );
+
+  }
+
   return (
     <div>
       {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (

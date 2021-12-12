@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useQuery } from '../hooks/useQuery';
 import { fetchUrlencoded } from '../helpers/fetch';
+import '../styles/home.css';
 
 export default function UsuarioID() {
 
-  const { uuid } = useSelector( state => state.auth );
+  const query = useQuery();
+  const uuid = query.get( 'uuid' );
   const [hayDatos, setHayDatos] = useState( false );
   const [usuario, setUsuario] = useState({});
 
@@ -46,21 +48,27 @@ export default function UsuarioID() {
 
   }
 
+  const handleVolver = ( ) => {
+
+    history.back();
+
+  };
+
   return (
-    <div>
-
-      <div className="trayecto-container">
-
-        <div className="trayecto-info-datos">
-
-          <p><strong>Nombre:</strong> {usuario.nombre}</p>
-          <p><strong>Apellidos:</strong> {usuario.apellidos} </p>
-          <p><strong>Edad:</strong> {usuario.edad}</p>
-          <p><strong>Correo:</strong> {usuario.correo}</p>
-          <p><strong>Teléfono</strong> {usuario.telefono}</p>
-          <p><strong>Localidad:</strong> {usuario.localidad} </p>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 50 + 'px' }}>
+      <div className="card" style={{ width: 18 + 'rem' }}>
+        <img src="http://assets.stickpng.com/images/585e4beacb11b227491c3399.png" className="card-img-top" alt="..."/>
+        <div className="card-body">
+          <h5 className="card-title"> <strong> Usuario: </strong> {usuario.nombre} {usuario.apellidos} </h5>
+          <p className="card-text"><strong>Edad:</strong> {usuario.edad}</p>
+          <p className="card-text"><strong>Correo:</strong> {usuario.correo}</p>
+          <p className="card-text"><strong>Teléfono</strong> {usuario.telefono}</p>
+          <p className="card-text"><strong>Localidad:</strong> {usuario.localidad} </p>
+          <button className="btn btn-success" onClick={() => handleVolver( ) }> Volver </button>
         </div>
       </div>
+
+
     </div>
   );
 
