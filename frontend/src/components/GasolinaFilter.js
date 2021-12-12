@@ -34,6 +34,7 @@ export default function GasolinaFilter({ previous, next, refrescarDatos }) {
     <>
       <div className="paginas-container">
         <button className="btn btn-success" onClick={previous} > Página anterior </button>
+        <button className="btn btn-warning" > <a href="/datosAbiertos/coches">Datos abiertos coches</a> </button>
         <button className="btn btn-success" onClick={next} > Página siguiente </button>
       </div>
       <button
