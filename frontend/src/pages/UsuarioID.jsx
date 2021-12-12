@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '../hooks/useQuery';
 import { fetchUrlencoded } from '../helpers/fetch';
 import '../styles/home.css';
+import { useSelector } from 'react-redux';
 
 export default function UsuarioID() {
 
@@ -9,6 +10,7 @@ export default function UsuarioID() {
   const uuid = query.get( 'uuid' );
   const [hayDatos, setHayDatos] = useState( false );
   const [usuario, setUsuario] = useState({});
+  const { imagen } = useSelector( state => state.auth );
 
   useEffect( async () => {
 
@@ -57,7 +59,7 @@ export default function UsuarioID() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 50 + 'px' }}>
       <div className="card" style={{ width: 18 + 'rem' }}>
-        <img src="http://assets.stickpng.com/images/585e4beacb11b227491c3399.png" className="card-img-top" alt="..."/>
+        <img src={imagen} className="card-img-top" alt="..."/>
         <div className="card-body">
           <h5 className="card-title"> <strong> Usuario: </strong> {usuario.nombre} {usuario.apellidos} </h5>
           <p className="card-text"><strong>Edad:</strong> {usuario.edad}</p>

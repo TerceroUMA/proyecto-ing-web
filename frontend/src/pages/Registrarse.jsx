@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { registrarse } from '../actions/auth';
 import { useDropzone } from 'react-dropzone';
 import Swal from 'sweetalert2';
-import { fetchFormData } from '../helpers/fetch';
 
 const Registrarse = () => {
 
