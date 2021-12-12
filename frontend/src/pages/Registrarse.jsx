@@ -6,6 +6,8 @@ import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { registrarse } from '../actions/auth';
 import { useDropzone } from 'react-dropzone';
+import Swal from 'sweetalert2';
+import { fetchFormData } from '../helpers/fetch';
 
 const Registrarse = () => {
 
@@ -50,7 +52,15 @@ const Registrarse = () => {
 
     e.preventDefault();
 
-    dispatch( registrarse( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) );
+    if ( file.length === 0 ) {
+
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Debe seleccionar una imagen' });
+
+    } else {
+
+      dispatch( registrarse( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, file[0], sendToHome ) );
+
+    }
 
   };
 
@@ -66,7 +76,6 @@ const Registrarse = () => {
     history.push( '/' );
 
   }
-
 
   return (
     <div className="auth__container">
@@ -157,7 +166,7 @@ const Registrarse = () => {
       <div className="foto-container">
         <h1 className="auth__title">Foto de perfil</h1>
         <div className="drag-and-drop" {...getRootProps()}>
-          <input {...getInputProps()}/>
+          <input {...getInputProps()} />
           {
             file.length > 0 ? <img style={{ maxWidth: '100%' }} src={file[0].preview} /> : <p>Arrastra una imagen o pinche aquí</p>
           }
