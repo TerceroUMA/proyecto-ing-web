@@ -6,6 +6,10 @@ import certifi
 import uuid
 import bcrypt
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 
 # Create your views here.
 
@@ -119,7 +123,7 @@ class Users(View):
 
     def post(self, request):
 
-        data = QueryDict(request.body)
+        data = request.POST.dict()
 
         salt = bcrypt.gensalt()
         hashed = bcrypt.hashpw(data["password"].encode(), salt)
@@ -134,8 +138,23 @@ class Users(View):
                 ok, jsonData = self.comprobaciones(data, "post")
                 if(ok):
 
+                    img = request.FILES['imagen']
+                    if img == None:
+                        url = ""
+                    else:
+
+                        cloudinary.config(
+                            cloud_name="dotshh7i8",
+                            api_key="131739146615866",
+                            api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
+                        )
+
+                        res = cloudinary.uploader.upload(img)
+
+                        url = res["url"]
+
                     us = {"uuid": str(uuid.uuid1()), "nombre": data["nombre"], "apellidos": data["apellidos"], "password": hashed,
-                          "edad": data["edad"], "correo": data["correo"], "telefono": data["telefono"], "localidad": data["localidad"]}
+                          "edad": data["edad"], "correo": data["correo"], "telefono": data["telefono"], "localidad": data["localidad"], "imagen": url}
 
                     self.users.insert_one(us)
 
