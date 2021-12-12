@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { fetchUrlencoded } from '../helpers/fetch';
+import { fetchFormData, fetchUrlencoded } from '../helpers/fetch';
 import { types } from '../types/types';
 
 const login = ( user ) => ({
@@ -7,13 +7,25 @@ const login = ( user ) => ({
   payload: user
 });
 
-export const registrarse = ( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) => {
+export const registrarse = ( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, file, sendToHome ) => {
 
   return async ( dispatch ) => {
 
     try {
 
-      const respuesta = await fetchUrlencoded( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' );
+      const formData = new FormData();
+      formData.append( 'nombre', nombre );
+      formData.append( 'correo', correo );
+      formData.append( 'password', password );
+      formData.append( 'confirmarPassword', confirmarPassword );
+      formData.append( 'apellidos', apellidos );
+      formData.append( 'telefono', telefono );
+      formData.append( 'edad', edad );
+      formData.append( 'localidad', localidad );
+      formData.append( 'imagen', file );
+
+      /* const respuesta = await fetchUrlencoded( 'users', { nombre, apellidos, correo, password, confirmarPassword, edad, telefono, localidad }, 'POST' ); */
+      const respuesta = await fetchFormData( 'users', formData, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {
@@ -50,6 +62,8 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
       }
 
     } catch ( error ) {
+
+      console.log( error );
 
       Swal.fire( 'Error', 'Ha ocurrido algún error con el servidor', 'error' );
 
