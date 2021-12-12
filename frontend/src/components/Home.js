@@ -12,10 +12,11 @@ export const Home = () => {
   const [trayectos, setTrayectos] = useState([]);
   const { uuid } = useSelector( state => state.auth );
   const history = useHistory();
-
+  console.log( uuid );
   const getDatos = ({ origen, destino, precio, plazasDisponibles, fechaDeSalida }) => {
 
     fetchUrlencoded( `trayectos?origen=${origen}&destino=${destino}&precio=${precio}&plazasDisponibles=${plazasDisponibles}&fechaDeSalida=${fechaDeSalida}&idUsuario=${uuid || ''}` )
+
       .then( response => response.json() )
       .then( data => {
 
@@ -27,7 +28,7 @@ export const Home = () => {
 
   useEffect( () => {
 
-    fetchUrlencoded( 'trayectos?origen=&destino=&precio=&plazasDisponibles=&fechaDeSalida=&idUsuario=' )
+    fetchUrlencoded( `trayectos?origen=&destino=&precio=&plazasDisponibles=&fechaDeSalida=&idUsuario=${uuid || ''}` )
       .then( response => response.json() )
       .then( data => {
 

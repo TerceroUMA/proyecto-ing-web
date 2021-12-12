@@ -4,6 +4,9 @@ import { fetchUrlencoded } from '../helpers/fetch';
 
 import { useHistory } from 'react-router';
 
+import '../styles/pages/usuarios.css';
+import { Link } from 'react-router-dom';
+
 
 export default function ListaParticipantes() {
 
@@ -13,7 +16,8 @@ export default function ListaParticipantes() {
   const [noExiste, setNoExiste] = useState( false );
   const url = history.location.pathname;
   const idTrayecto = url.split( '/' )[2];
-  const [pasajeros, setPasajeros] = useState([]); ;
+  const [pasajeros, setPasajeros] = useState([{}]);
+  const [cambio, setCambio] = useState( false );
 
   useEffect( async () => {
 
@@ -26,9 +30,12 @@ export default function ListaParticipantes() {
 
       if ( body.ok ) {
 
+        const r = await fetchUrlencoded( `users?uuid=${body.trayecto.idConductor}` );
+        const a = await r.json();
 
-        setTrayecto( body.trayecto );
-        setPasajeros( body.trayecto.pasajeros );
+        const ax = body.trayecto;
+        ax.conductorObject = a.usuario;
+        setTrayecto( ax );
 
         const arr = [];
         for ( let p = 0; p < body.trayecto.pasajeros.length; p++ ) {
@@ -36,11 +43,16 @@ export default function ListaParticipantes() {
           const respuesta = await fetchUrlencoded( `users?uuid=${body.trayecto.pasajeros[p]}` );
           const aux = await respuesta.json();
 
-          arr.push( aux.usuario.nombre + ' ' + aux.usuario.apellidos );
+          arr.push({
+            id: body.trayecto.pasajeros[p],
+            nombre: aux.usuario.nombre + ' ' + aux.usuario.apellidos,
+            imagen: aux.usuario.imagen
+          });
 
         };
 
         setPasajeros( arr );
+        setCambio( true );
 
 
       } else {
@@ -54,7 +66,7 @@ export default function ListaParticipantes() {
 
   }, [idTrayecto]);
 
-  if ( !hayDatos ) {
+  if ( !hayDatos || !cambio ) {
 
     return (
       <div className="trayectos-container" >
@@ -81,20 +93,41 @@ export default function ListaParticipantes() {
 
 
   return (
-    <div>
-      <div className="trayecto-info-datos">
-        <h2> Conductor: </h2>
-        <p>{trayecto.conductor} </p>
-        <h2>Pasajeros: </h2>
-        {
-          pasajeros.map( paja => (
+    <div style={{ marginLeft: 25 + 'px', marginTop: 15 + 'px' }}>
+      <h1> Lista de Participantes </h1>
+      <br></br>
+      <h3> Conductor: </h3>
+      <div className="usuario-container">
+        <div className="usuario-foto">
+          <img src={trayecto.conductorObject.imagen}/>
+        </div>
 
-            <p key={paja}> {paja} </p>
+        <div className="usuario-info">
+          <Link replace to={{ pathname: '/users', search: `?uuid=${trayecto.idConductor}` }}> {trayecto.conductor} </Link>
+        </div>
 
-          ) )
-        }
-        <button className="btn btn-success" onClick={() => handleVolver( idTrayecto ) }> Volver </button>
       </div>
+      <br></br>
+
+      <h3> Participantes: </h3>
+      {
+        pasajeros.map( k => (
+
+          <div key={k} className="usuario-container">
+            <div className="usuario-foto">
+              <img src={k.imagen}/>
+            </div>
+            <div className="usuario-info">
+              <Link replace to={{ pathname: '/users', search: `?uuid=${k.id}` }}> {k.nombre} </Link>
+              <br></br>
+            </div>
+
+          </div>
+
+
+        ) )
+      }
+      <button className="btn btn-success" onClick={() => handleVolver( idTrayecto ) }> Volver </button>
 
     </div>
   );
