@@ -41,7 +41,7 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
-          <Route path="/user">
+          <Route path="/users">
             <UsuarioID />
           </Route>
           <Route path="/trayectos/:idTrayecto/participantes">

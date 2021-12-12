@@ -10,6 +10,7 @@ export default function TrayectosCreados() {
   const { uuid } = useSelector( state => state.auth );
   const [hayDatos, setHayDatos] = useState( false );
   const [trayectos, setTrayectos] = useState([]);
+  const [cambio, setCambio] = useState( false );
 
 
   useEffect( async () => {
@@ -36,6 +37,7 @@ export default function TrayectosCreados() {
         };
 
         setTrayectos( trConductor );
+        setCambio( true );
 
       }
 
@@ -45,7 +47,7 @@ export default function TrayectosCreados() {
 
   }, [uuid]);
 
-  if ( !hayDatos ) {
+  if ( !hayDatos || !cambio ) {
 
     return (
       <div className="trayectos-container" >
@@ -70,7 +72,7 @@ export default function TrayectosCreados() {
   };
 
   return (
-    <div>
+    <div className="home-container">
       {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (
         <div
           key={uuidTrayecto} className="trayectos-container">
