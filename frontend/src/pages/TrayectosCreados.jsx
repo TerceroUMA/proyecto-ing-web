@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { fetchUrlencoded } from '../helpers/fetch';
+import { borrarTrayecto } from '../actions/trayectos';
 import moment from 'moment';
 
 export default function TrayectosCreados() {
@@ -8,6 +10,8 @@ export default function TrayectosCreados() {
   const { uuid } = useSelector( state => state.auth );
   const [hayDatos, setHayDatos] = useState( false );
   const [trayectos, setTrayectos] = useState([]);
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect( async () => {
 
@@ -24,6 +28,21 @@ export default function TrayectosCreados() {
 
   }, [uuid]);
 
+  const SendToTrayectosCreados = () => {
+
+    history.push( '/trayectosCreados' );
+
+  };
+
+  const handleBorrarTrayecto = ( uuidTrayecto ) => {
+
+    dispatch( borrarTrayecto( uuidTrayecto, SendToTrayectosCreados ) );
+
+
+    // dispatch( registrarse( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) );
+
+  };
+
   if ( !hayDatos ) {
 
     return (
@@ -33,8 +52,19 @@ export default function TrayectosCreados() {
 
   }
 
+  if ( trayectos.length === 0 ) {
+
+    return (
+      <div className="trayectos-container" >
+        <h1> No has creado ningún viaje </h1>
+        <button className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
+      </div> );
+
+  }
+
   return (
     <div>
+      <button className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
       {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (
         <div
           key={uuidTrayecto} className="trayectos-container">
@@ -54,6 +84,7 @@ export default function TrayectosCreados() {
                 <p><strong>Periodicidad:</strong> {periodicidad} días</p>
               </div>
             </div>
+            <button className="btn btn-danger" onClick={() => handleBorrarTrayecto( uuidTrayecto )}>Borrar</button>
           </div>
         </div>
       ) ) }

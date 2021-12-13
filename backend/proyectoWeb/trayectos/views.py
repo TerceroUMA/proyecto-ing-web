@@ -1,7 +1,9 @@
+from collections import _OrderedDictValuesView
 from datetime import datetime
 from django.views import View
 from django.http import QueryDict
 from django.http.response import JsonResponse
+from django.views.generic.base import TemplateResponseMixin
 from pymongo import MongoClient
 import certifi
 import uuid
@@ -34,9 +36,12 @@ class Trayectos(View):
         encontrado = False
         contador = 0
 
+        print(data)
+
         while(not encontrado and contador < len(data)):
             encontrado = self.comprobarCaracteres(
                 list(data.values())[contador])
+            
             contador = contador + 1
 
         if(encontrado):
@@ -166,6 +171,7 @@ class Trayectos(View):
             us = self.usuarios.find_one({"uuid": tr["conductor"]}, {"_id": 0})
             nombre = us["nombre"] + " " + us["apellidos"]
             tr.update({"conductor": nombre})
+            tr["idConductor"] = us["uuid"]
 
             return JsonResponse({"ok": True, "trayecto": tr}, safe=False)
 
@@ -180,6 +186,9 @@ class Trayectos(View):
 
     def post(self, request):
         data = request.POST.dict()
+
+        print(data)
+
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):
@@ -191,13 +200,12 @@ class Trayectos(View):
                 if img == None:
                     url = ""
                 else:
-                    
-                    cloudinary.config(
-                    cloud_name="dotshh7i8",
-                    api_key="131739146615866",
-                    api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
-                    )
 
+                    cloudinary.config(
+                        cloud_name="dotshh7i8",
+                        api_key="131739146615866",
+                        api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
+                    )
 
                     res = cloudinary.uploader.upload(img)
 

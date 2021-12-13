@@ -13,6 +13,7 @@ import UsuarioID from '../pages/UsuarioID';
 import { types } from '../types/types';
 import ListaParticipantes from '../pages/ListaParticipantes';
 import TrayectosInscritos from '../pages/TrayectoInscritos';
+import CrearTrayecto from '../pages/CrearTrayecto';
 
 export const AppRouter = () => {
 
@@ -41,7 +42,7 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
-          <Route path="/user">
+          <Route path="/users">
             <UsuarioID />
           </Route>
           <Route path="/trayectos/:idTrayecto/participantes">
@@ -55,6 +56,9 @@ export const AppRouter = () => {
           </Route>
           <Route path="/trayectosCreados">
             <TrayectosCreados />
+          </Route>
+          <Route path="/crearTrayecto">
+            <CrearTrayecto />
           </Route>
           <Route path="/datosAbiertos/gasolineras">
             <Gasolinera />

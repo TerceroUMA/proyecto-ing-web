@@ -72,15 +72,6 @@ export default function Navbar() {
                 </> )
                 : ( <>
                   <li className="nav-item">
-                    <Link to="/registrarse"
-                      className="nav-link"
-                      onClick={ logout }
-                    >
-                        Cerrar sesión
-                    </Link>
-                  </li>
-
-                  <li className="nav-item">
                     <Link to="/trayectosCreados"
                       className="nav-link"
                     >
@@ -95,6 +86,16 @@ export default function Navbar() {
                       Soy Pasajero
                     </Link>
                   </li>
+
+                  <li className="nav-item">
+                    <Link to="/registrarse"
+                      className="nav-link"
+                      onClick={ logout }
+                    >
+                        Cerrar sesión
+                    </Link>
+                  </li>
+
                 </> )
 
             }
