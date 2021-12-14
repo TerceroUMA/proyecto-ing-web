@@ -36,8 +36,6 @@ class Trayectos(View):
         encontrado = False
         contador = 0
 
-        print(data)
-
         while(not encontrado and contador < len(data)):
             encontrado = self.comprobarCaracteres(
                 list(data.values())[contador])
@@ -187,8 +185,6 @@ class Trayectos(View):
     def post(self, request):
         data = request.POST.dict()
 
-        print(data)
-
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):
@@ -243,6 +239,7 @@ class Trayectos(View):
 
     def put(self, request):
         data = QueryDict(request.body)
+
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):

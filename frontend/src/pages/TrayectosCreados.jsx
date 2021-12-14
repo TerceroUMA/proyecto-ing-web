@@ -10,6 +10,7 @@ export default function TrayectosCreados() {
   const { uuid } = useSelector( state => state.auth );
   const [hayDatos, setHayDatos] = useState( false );
   const [trayectos, setTrayectos] = useState([]);
+  const [refresh, setRefresh] = useState( false );
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -28,7 +29,21 @@ export default function TrayectosCreados() {
 
   }, [uuid]);
 
-  const SendToTrayectosCreados = () => {
+  useEffect( async () => {
+
+    if ( refresh ) {
+
+      const respuesta = await fetchUrlencoded( `trayectos/${uuid}` );
+      const body = await respuesta.json();
+      setTrayectos( body.trayectos );
+
+      return () => setRefresh( false );
+
+    }
+
+  }, [refresh]);
+
+  const sendToTrayectosCreados = () => {
 
     history.push( '/trayectosCreados' );
 
@@ -36,10 +51,15 @@ export default function TrayectosCreados() {
 
   const handleBorrarTrayecto = ( uuidTrayecto ) => {
 
-    dispatch( borrarTrayecto( uuidTrayecto, SendToTrayectosCreados ) );
+    dispatch( borrarTrayecto( uuidTrayecto, sendToTrayectosCreados ) );
+    setRefresh( true );
 
+  };
 
-    // dispatch( registrarse( nombre, correo, password, confirmarPassword, apellidos, telefono, edad, localidad, sendToHome ) );
+  const handleEditarTrayecto = ( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen ) => {
+
+    const data = { uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen };
+    history.push( '/editarTrayecto', data );
 
   };
 
@@ -56,20 +76,20 @@ export default function TrayectosCreados() {
 
     return (
       <div className="trayectos-container" >
-        <h1> No has creado ningún viaje </h1>
-        <button className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
+        <h1> No has creado ningún viaje </h1> <br/>
+        <button type="button" className="btn btn-primary"><a href="/crearTrayecto"> Crear Trayecto </a> </button>
       </div> );
 
   }
 
   return (
     <div className="trayectos-container">
-      <button className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
-      {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (
+      <button type="button" className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
+      {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen }) => (
         <div
           key={uuidTrayecto} className="trayectos">
           <div className="trayecto">
-            <img src={'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages1.autocasion.com%2Funsafe%2F900x600%2Factualidad%2Fwp-content%2Fuploads%2F2013%2F12%2F_main_image_146785_52b30d8a6f62f.jpg&f=1&nofb=1'} />
+            <img src={imagen} />
             <div className="trayecto-info">
               <h2>{origen} - {destino}</h2>
 
@@ -85,6 +105,7 @@ export default function TrayectosCreados() {
               </div>
             </div>
             <button className="btn btn-danger" onClick={() => handleBorrarTrayecto( uuidTrayecto )}>Borrar</button>
+            <button className="btn btn-warning" onClick={() => handleEditarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen )}>Editar</button>
           </div>
         </div>
       ) ) }

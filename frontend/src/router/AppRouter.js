@@ -14,6 +14,7 @@ import { types } from '../types/types';
 import ListaParticipantes from '../pages/ListaParticipantes';
 import TrayectosInscritos from '../pages/TrayectoInscritos';
 import CrearTrayecto from '../pages/CrearTrayecto';
+import ActualizarTrayecto from '../pages/ActualizarTrayecto';
 
 export const AppRouter = () => {
 
@@ -59,6 +60,9 @@ export const AppRouter = () => {
           </Route>
           <Route path="/crearTrayecto">
             <CrearTrayecto />
+          </Route>
+          <Route path="/editarTrayecto">
+            <ActualizarTrayecto />
           </Route>
           <Route path="/datosAbiertos/gasolineras">
             <Gasolinera />
