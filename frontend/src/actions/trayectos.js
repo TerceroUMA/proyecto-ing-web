@@ -105,19 +105,6 @@ export const actualizarTrayecto = ( uuidTrayecto, origen, destino, tipoDeVehicul
 
   return async ( ) => {
 
-    const formData = new FormData();
-    formData.append( 'uuid', uuidTrayecto );
-    formData.append( 'origen', origen );
-    formData.append( 'destino', destino );
-    formData.append( 'tipoDeVehiculo', tipoDeVehiculo );
-    formData.append( 'conductor', conductor );
-    formData.append( 'duracion', duracion );
-    formData.append( 'precio', precio );
-    formData.append( 'plazasDisponibles', plazasDisponibles );
-    formData.append( 'fechaDeSalida', fechaDeSalida );
-    formData.append( 'horaDeSalida', horaDeSalida );
-    formData.append( 'periodicidad', periodicidad );
-
     const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen }, 'PUT' );
     const data = await respuesta.json();
 

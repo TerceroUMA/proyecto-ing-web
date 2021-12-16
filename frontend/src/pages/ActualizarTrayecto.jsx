@@ -5,7 +5,6 @@ import { useForm } from '../hooks/useForm';
 import { useLocation, useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { actualizarTrayecto } from '../actions/trayectos';
-import TrayectosCreados from './TrayectoInscritos';
 
 
 const ActualizarTrayecto = () => {
@@ -73,13 +72,13 @@ const ActualizarTrayecto = () => {
 
   return (
     <div className="auth__container">
-      <h1 className="auth__title">
-        Crear Nuevo Trayecto
-      </h1>
       <form
         className="auth__form"
         onSubmit={handleOnSubmit}
       >
+        <h1 className="auth__title">
+        Crear Nuevo Trayecto
+        </h1>
         {/* Se podría añadir */}
         {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
         <input

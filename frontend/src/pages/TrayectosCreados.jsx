@@ -63,6 +63,12 @@ export default function TrayectosCreados() {
 
   };
 
+  const handleCrear = () => {
+
+    history.push( '/crearTrayecto' );
+
+  };
+
   if ( !hayDatos ) {
 
     return (
@@ -83,32 +89,38 @@ export default function TrayectosCreados() {
   }
 
   return (
-    <div className="trayectos-container">
-      <button type="button" className="btn btn-primary" > <a href="/crearTrayecto">Crear Trayecto</a> </button>
-      {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen }) => (
-        <div
-          key={uuidTrayecto} className="trayectos">
-          <div className="trayecto">
-            <img src={imagen} />
-            <div className="trayecto-info">
-              <h2>{origen} - {destino}</h2>
+    <div className="trayectos-container" style={{ flexDirection: 'column' }}>
+      <button type="button" className="btn btn-primary" style={{ marginTop: 5 + '%', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 10 + 'px' }}>
+        {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen }) => (
+          <div
+            key={uuidTrayecto} className="trayectos">
+            <div className="trayecto">
+              <img src={imagen} />
+              <div className="trayecto-info">
+                <h2>{origen} - {destino}</h2>
 
-              <div className="trayecto-info-datos">
+                <div className="trayecto-info-datos">
 
-                <p><strong>Precio:</strong> {precio}€</p>
-                <p><strong>Duración:</strong> {duracion} minutos</p>
-                <p><strong>Plazas disponibles:</strong> {plazasDisponibles}</p>
-                <p><strong>Fecha de salida:</strong> {moment( fechaDeSalida ).format( 'DD/MM/YYYY' )}</p>
-                <p><strong>Hora de salida:</strong> {horaDeSalida}</p>
-                <p><strong>Tipo de vehículo:</strong> {tipoDeVehiculo}</p>
-                <p><strong>Periodicidad:</strong> {periodicidad} días</p>
+                  <p><strong>Precio:</strong> {precio}€</p>
+                  <p><strong>Duración:</strong> {duracion} minutos</p>
+                  <p><strong>Plazas disponibles:</strong> {plazasDisponibles}</p>
+                  <p><strong>Fecha de salida:</strong> {moment( fechaDeSalida ).format( 'DD/MM/YYYY' )}</p>
+                  <p><strong>Hora de salida:</strong> {horaDeSalida}</p>
+                  <p><strong>Tipo de vehículo:</strong> {tipoDeVehiculo}</p>
+                  <p><strong>Periodicidad:</strong> {periodicidad} días</p>
+                </div>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%', marginBottom: 10 + 'px' }}>
+
+                <button className="btn btn-danger" onClick={() => handleBorrarTrayecto( uuidTrayecto )} style={{ width: 40 + '%', marginRight: 5 + 'px' }}>Borrar</button>
+                <button className="btn btn-warning" onClick={() => handleEditarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen ) }style={{ width: 40 + '%', marginLeft: 5 + 'px' }}>Editar</button>
+              </div>
+
             </div>
-            <button className="btn btn-danger" onClick={() => handleBorrarTrayecto( uuidTrayecto )}>Borrar</button>
-            <button className="btn btn-warning" onClick={() => handleEditarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen )}>Editar</button>
           </div>
-        </div>
-      ) ) }
+        ) ) }
+      </div>
     </div>
   );
 
