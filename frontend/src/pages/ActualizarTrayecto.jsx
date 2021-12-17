@@ -1,30 +1,35 @@
 import React, { useState } from 'react';
-import { useForm } from '../hooks/useForm';
-import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
-import { crearTrayecto } from '../actions/trayectos';
-import Swal from 'sweetalert2';
+import { useForm } from '../hooks/useForm';
+import { useLocation, useHistory } from 'react-router-dom';
+import { actualizarTrayecto } from '../actions/trayectos';
 
-const CrearTrayecto = () => {
 
-  const history = useHistory();
+const ActualizarTrayecto = () => {
+
+  const location = useLocation();
   const dispatch = useDispatch();
-  const { uuid } = useSelector( state => state.auth );
+  const history = useHistory();
+
+  const datosTrayecto = location.state;
 
   const [formValues, handleInputChange] = useForm({
-    origen: '',
-    destino: '',
-    tipoDeVehiculo: '',
-    duracion: '',
-    precio: '',
-    plazasDisponibles: '',
-    fechaDeSalida: '',
-    horaDeSalida: '',
-    periodicidad: ''
+    origen: datosTrayecto.origen,
+    destino: datosTrayecto.destino,
+    tipoDeVehiculo: datosTrayecto.tipoDeVehiculo,
+    duracion: datosTrayecto.duracion,
+    precio: datosTrayecto.precio,
+    plazasDisponibles: datosTrayecto.plazasDisponibles,
+    fechaDeSalida: datosTrayecto.fechaDeSalida,
+    horaDeSalida: datosTrayecto.horaDeSalida,
+    periodicidad: datosTrayecto.periodicidad
   });
 
   const { origen, destino, tipoDeVehiculo, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad } = formValues;
+  const imagen = datosTrayecto.imagen;
+  const conductor = datosTrayecto.conductor;
+  const uuidTrayecto = datosTrayecto.uuidTrayecto;
 
   const [file, setFile] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -53,11 +58,11 @@ const CrearTrayecto = () => {
 
     if ( file.length === 0 ) {
 
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Debe seleccionar una imagen' });
+      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
 
     } else {
 
-      dispatch( crearTrayecto( origen, destino, tipoDeVehiculo, uuid, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, file[0], sendToTrayectosCreados ) );
+      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
 
     }
 
@@ -157,16 +162,11 @@ const CrearTrayecto = () => {
 
       <div className="foto-container">
         <h1 className="auth__title">Foto del vehiculo</h1>
-        <div className="drag-and-drop" {...getRootProps()}>
-          <input {...getInputProps()} />
-          {
-            file.length > 0 ? <img style={{ maxWidth: '100%' }} src={file[0].preview} /> : <p>Arrastra una imagen o pinche aquí</p>
-          }
-        </div>
+        <img style={{ maxWidth: '100%' }} src={imagen} />
       </div>
     </div>
   );
 
 };
 
-export default CrearTrayecto;
+export default ActualizarTrayecto;
