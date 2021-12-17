@@ -101,11 +101,12 @@ export const borrarTrayecto = ( uuidTrayecto, sendToTrayectosCreados ) => {
 
 };
 
-export const actualizarTrayecto = ( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, sendToTrayectosCreados ) => {
+export const actualizarTrayecto = ( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) => {
 
   return async ( ) => {
 
-    const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen }, 'PUT' );
+
+    const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad }, 'PUT' );
     const data = await respuesta.json();
 
     if ( data.ok ) {

@@ -182,6 +182,7 @@ class Trayectos(View):
 
         return condicionNull, JsonResponse({"ok:": False, "msg": 'Existe algún campo vacío'}, safe=False)
 
+
     def post(self, request):
         data = request.POST.dict()
 
@@ -238,8 +239,11 @@ class Trayectos(View):
     # Actualiza los datos del trayecto que coincida con el id proporcionado.
 
     def put(self, request):
+
         data = QueryDict(request.body)
 
+        print(data)
+        
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):
@@ -252,21 +256,7 @@ class Trayectos(View):
                 if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
                     return JsonResponse({"ok": False, "msg": 'No se ha ningun trayecto con ese id'}, safe=False)
 
-                img = request.FILES['imagen']
-                if img == None:
-                    url = data["imagen"]
-                else:
-
-                    cloudinary.config(
-                        cloud_name="dotshh7i8",
-                        api_key="131739146615866",
-                        api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
-                    )
-
-                    res = cloudinary.uploader.upload(img)
-
-                    url = res["url"]
-
+            
                 newvalues = {"$set": {
                     "origen": data["origen"],
                     "destino": data["destino"],
@@ -278,7 +268,6 @@ class Trayectos(View):
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
                     "periodicidad": data["periodicidad"],
-                    "imagen": url
                 }
                 }
 

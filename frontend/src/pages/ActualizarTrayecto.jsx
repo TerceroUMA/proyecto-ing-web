@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from '../hooks/useForm';
 import { useLocation, useHistory } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import { actualizarTrayecto } from '../actions/trayectos';
 
 
@@ -32,7 +31,7 @@ const ActualizarTrayecto = () => {
   const conductor = datosTrayecto.conductor;
   const uuidTrayecto = datosTrayecto.uuidTrayecto;
 
-  const [file, setFile] = useState([imagen]);
+  const [file, setFile] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     onDrop: acceptedFiles => {
@@ -59,16 +58,15 @@ const ActualizarTrayecto = () => {
 
     if ( file.length === 0 ) {
 
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Debe seleccionar una imagen' });
+      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
 
     } else {
 
-      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, file[0], sendToTrayectosCreados ) );
+      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
 
     }
 
   };
-
 
   return (
     <div className="auth__container">
@@ -164,12 +162,7 @@ const ActualizarTrayecto = () => {
 
       <div className="foto-container">
         <h1 className="auth__title">Foto del vehiculo</h1>
-        <div className="drag-and-drop" {...getRootProps()}>
-          <input {...getInputProps()} />
-          {
-            file.length > 0 ? <img style={{ maxWidth: '100%' }} src={file[0].preview} /> : <p>Arrastra una imagen o pinche aquí</p>
-          }
-        </div>
+        <img style={{ maxWidth: '100%' }} src={imagen} />
       </div>
     </div>
   );
