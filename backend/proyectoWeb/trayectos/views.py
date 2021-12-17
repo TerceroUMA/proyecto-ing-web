@@ -39,7 +39,7 @@ class Trayectos(View):
         while(not encontrado and contador < len(data)):
             encontrado = self.comprobarCaracteres(
                 list(data.values())[contador])
-            
+
             contador = contador + 1
 
         if(encontrado):
@@ -252,6 +252,21 @@ class Trayectos(View):
                 if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
                     return JsonResponse({"ok": False, "msg": 'No se ha ningun trayecto con ese id'}, safe=False)
 
+                img = request.FILES['imagen']
+                if img == None:
+                    url = data["imagen"]
+                else:
+
+                    cloudinary.config(
+                        cloud_name="dotshh7i8",
+                        api_key="131739146615866",
+                        api_secret="M-smYHe4EbW3a3n6e9L7bY-Btgk"
+                    )
+
+                    res = cloudinary.uploader.upload(img)
+
+                    url = res["url"]
+
                 newvalues = {"$set": {
                     "origen": data["origen"],
                     "destino": data["destino"],
@@ -262,7 +277,8 @@ class Trayectos(View):
                     "plazasDisponibles": data["plazasDisponibles"],
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
-                    "periodicidad": data["periodicidad"]
+                    "periodicidad": data["periodicidad"],
+                    "imagen": url
                 }
                 }
 
