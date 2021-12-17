@@ -4,6 +4,9 @@ import { fetchUrlencoded } from '../helpers/fetch';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useHistory } from 'react-router';
+import { useForm } from '../hooks/useForm';
+
+import '../styles/pages/trayectoId.css';
 
 export default function TrayectoID() {
 
@@ -14,7 +17,13 @@ export default function TrayectoID() {
   const [noExiste, setNoExiste] = useState( false );
   const url = history.location.pathname;
   const idTrayecto = url.split( '/' )[2];
-  const [pasajeros, setPasajeros] = useState([]); ;
+  const [pasajeros, setPasajeros] = useState([]);
+
+  const [tweetValue, handleChange] = useForm({
+    tweetText: ''
+  });
+
+  const tweetText = tweetValue.tweetText;
 
   useEffect( async () => {
 
@@ -97,8 +106,7 @@ export default function TrayectoID() {
   }
 
   return (
-    <div>
-
+    <div className="trayecto-id-container">
       <div className="trayectos-container">
         <div className="trayecto">
           <img src={'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages1.autocasion.com%2Funsafe%2F900x600%2Factualidad%2Fwp-content%2Fuploads%2F2013%2F12%2F_main_image_146785_52b30d8a6f62f.jpg&f=1&nofb=1'} />
@@ -147,10 +155,41 @@ export default function TrayectoID() {
                       </button>
                     )
                 }
-
                 <button className="btn btn-warning" onClick={() => handleListarUsuariosTrayectos( idTrayecto ) } > Pasajeros </button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TODO: Añadir a la url el path base de nuestra página una vez subida */}
+      {/* url base: https://twitter.com/intent/tweet */}
+      {/* Si no lo pone no aparece el texto: ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E */}
+      {/* Es el texto que aparecerá: text=Guides%20%7C%20Docs%20%7C%20Twitter%20Developer%20Platform */}
+      {/* Enlace que aparecerá en el tweet: url= */}
+
+
+      <div className="twitter-container">
+        <div>
+          <h3>Escribe un tweet</h3>
+          <textarea
+            className=""
+            name="tweetText"
+            value={tweetText}
+            onChange={handleChange}
+            placeholder="Escribe un tweet"
+            maxLength={280}
+          />
+          <div className="datos-container">
+            <p className="disabled">{280 - tweetText.length}</p>
+            <a
+              href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=www.youtube.com${window.location.pathname}`}
+              target={'_blank'} rel="canonical noreferrer"
+            >
+              <button className="btn btn-primary">
+                Twittear
+              </button>
+            </a>
           </div>
         </div>
       </div>
