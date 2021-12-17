@@ -105,6 +105,8 @@ export default function TrayectoID() {
 
   }
 
+  const baseUrlTweet = 'www.youtube.com';
+
   return (
     <div className="trayecto-id-container">
       <div className="trayectos-container">
@@ -178,12 +180,12 @@ export default function TrayectoID() {
             value={tweetText}
             onChange={handleChange}
             placeholder="Escribe un tweet"
-            maxLength={280}
+            maxLength={317 - baseUrlTweet.length - window.location.pathname.length}
           />
           <div className="datos-container">
-            <p className="disabled">{280 - tweetText.length}</p>
+            <p className="disabled">{317 - tweetText.length - baseUrlTweet.length - window.location.pathname.length}</p>
             <a
-              href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=www.youtube.com${window.location.pathname}`}
+              href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${baseUrlTweet}${window.location.pathname}`}
               target={'_blank'} rel="canonical noreferrer"
             >
               <button className="btn btn-primary">
