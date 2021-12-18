@@ -81,17 +81,17 @@ export default function TrayectosCreados() {
   if ( trayectos.length === 0 ) {
 
     return (
-      <div className="trayectos-container" >
-        <h1> No has creado ningún viaje </h1> <br/>
-        <button type="button" className="btn btn-primary" style={{ marginTop: 5 + '%', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
+      <div className="trayectos-container" style={{ flexDirection: 'column' }} >
+        <h1 style={{ marginTop: 10 + 'px' }}> No has creado ningún viaje </h1> <br/>
+        <button type="button" className="btn btn-primary" style={{ marginTop: 5 + 'px', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
       </div> );
 
   }
 
   return (
     <div className="trayectos-container" style={{ flexDirection: 'column' }}>
-      <button type="button" className="btn btn-primary" style={{ marginTop: 5 + '%', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 10 + 'px' }}>
+      <button type="button" className="btn btn-primary" style={{ marginTop: 15 + 'px', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 15 + 'px' }}>
         {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen }) => (
           <div
             key={uuidTrayecto} className="trayectos">
