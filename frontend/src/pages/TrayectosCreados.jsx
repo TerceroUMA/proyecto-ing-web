@@ -23,13 +23,7 @@ export default function TrayectosCreados() {
       setHayDatos( true );
       setTrayectos( body.trayectos );
 
-
     }
-
-
-  }, [uuid]);
-
-  useEffect( async () => {
 
     if ( refresh ) {
 
@@ -41,7 +35,7 @@ export default function TrayectosCreados() {
 
     }
 
-  }, [refresh]);
+  }, [uuid, refresh]);
 
   const sendToTrayectosCreados = () => {
 
