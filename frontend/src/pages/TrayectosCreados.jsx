@@ -83,7 +83,7 @@ export default function TrayectosCreados() {
     return (
       <div className="trayectos-container" >
         <h1> No has creado ningún viaje </h1> <br/>
-        <button type="button" className="btn btn-primary"><a href="/crearTrayecto"> Crear Trayecto </a> </button>
+        <button type="button" className="btn btn-primary" style={{ marginTop: 5 + '%', width: 25 + '%' }} onClick={handleCrear}> Crear Trayecto </button>
       </div> );
 
   }
