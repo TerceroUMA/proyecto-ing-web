@@ -57,6 +57,12 @@ export default function TrayectosCreados() {
 
   };
 
+  const handleVerTrayecto = ( idTrayecto ) => {
+
+    history.push( `/trayectos/${idTrayecto}` );
+
+  };
+
   const handleCrear = () => {
 
     history.push( '/crearTrayecto' );
@@ -106,7 +112,9 @@ export default function TrayectosCreados() {
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%', marginBottom: 10 + 'px' }}>
-
+                <button className="btn btn-success" onClick={() => handleVerTrayecto( uuidTrayecto )} style={{ width: 81 + '%', marginRight: 5 + 'px' }}>Acceder</button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 100 + '%', marginBottom: 10 + 'px' }}>
                 <button className="btn btn-danger" onClick={() => handleBorrarTrayecto( uuidTrayecto )} style={{ width: 40 + '%', marginRight: 5 + 'px' }}>Borrar</button>
                 <button className="btn btn-warning" onClick={() => handleEditarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles, imagen )} style={{ width: 40 + '%', marginLeft: 5 + 'px' }}>Editar</button>
               </div>

@@ -39,11 +39,6 @@ export default function TrayectoID() {
         setTrayecto( body.trayecto );
         setPasajeros( body.trayecto.pasajeros );
 
-        console.log( body.trayecto );
-
-        console.log( `Origen: ${body.trayecto.origen}` );
-        console.log( `Destino: ${body.trayecto.destino}` );
-
         fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.origen}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
           .then( res => res.json() )
           .then( data => {
@@ -152,8 +147,11 @@ export default function TrayectoID() {
               <p><strong>Periodicidad:</strong> {trayecto.periodicidad} días</p>
 
               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+
                 {
-                  pasajeros.filter( p => p === uuid ).length === 0
+                  uuid !== trayecto.idConductor &&
+
+                  ( pasajeros.filter( p => p === uuid ).length === 0
                     ? (
                       trayecto.plazasDisponibles !== '0'
                         ? (
@@ -181,7 +179,7 @@ export default function TrayectoID() {
                       >
                     Desinscribirse
                       </button>
-                    )
+                    ) )
                 }
 
                 <button className="btn btn-warning" onClick={() => handleListarUsuariosTrayectos( idTrayecto ) } > Pasajeros </button>
