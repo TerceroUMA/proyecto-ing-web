@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-import { useDropzone } from 'react-dropzone';
 import { useForm } from '../hooks/useForm';
 import { useLocation, useHistory } from 'react-router-dom';
 import { actualizarTrayecto } from '../actions/trayectos';
@@ -31,21 +30,6 @@ const ActualizarTrayecto = () => {
   const conductor = datosTrayecto.conductor;
   const uuidTrayecto = datosTrayecto.uuidTrayecto;
 
-  const [file, setFile] = useState([]);
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*',
-    onDrop: acceptedFiles => {
-
-      setFile(
-        acceptedFiles.map( file =>
-          Object.assign( file, {
-            preview: URL.createObjectURL( file )
-          })
-        ) );
-
-    }
-  });
-
   const sendToTrayectosCreados = () => {
 
     history.push( '/trayectosCreados' );
@@ -56,15 +40,7 @@ const ActualizarTrayecto = () => {
 
     e.preventDefault( e );
 
-    if ( file.length === 0 ) {
-
-      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
-
-    } else {
-
-      dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
-
-    }
+    dispatch( actualizarTrayecto( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) );
 
   };
 

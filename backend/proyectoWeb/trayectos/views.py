@@ -241,8 +241,6 @@ class Trayectos(View):
     def put(self, request):
 
         data = QueryDict(request.body)
-
-        print(data)
         
         vacio, jsonDataVacio = self.paramVacio(data)
 
