@@ -48,7 +48,7 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
-            console.log( data );
+            console.log( 'origen: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudOrigen( lat );
             setLongitudOrigen( lng );
@@ -59,6 +59,7 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
+            console.log( 'destino: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudDestino( lat );
             setLongitudDestino( lng );
@@ -191,7 +192,7 @@ export default function TrayectoID() {
       </div>
 
       {
-        longitudOrigen !== 0
+        longitudOrigen !== 0 && longitudDestino !== 0
 
           ? <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 50 + 'px', marginTop: 50 + 'px' }}>
 
