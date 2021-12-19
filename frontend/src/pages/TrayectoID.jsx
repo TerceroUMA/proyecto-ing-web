@@ -5,6 +5,11 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useHistory } from 'react-router';
 
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { IconLocation } from '../components/IconLoacation';
+import Routing from './Rotuing';
+
 export default function TrayectoID() {
 
   const { uuid } = useSelector( state => state.auth );
@@ -15,6 +20,10 @@ export default function TrayectoID() {
   const url = history.location.pathname;
   const idTrayecto = url.split( '/' )[2];
   const [pasajeros, setPasajeros] = useState([]); ;
+  const [latitudOrigen, setLatitudOrigen] = useState( 0 );
+  const [longitudOrigen, setLongitudOrigen] = useState( 0 );
+  const [latitudDestino, setLatitudDestino] = useState( 0 );
+  const [longitudDestino, setLongitudDestino] = useState( 0 );
 
   useEffect( async () => {
 
@@ -29,6 +38,32 @@ export default function TrayectoID() {
 
         setTrayecto( body.trayecto );
         setPasajeros( body.trayecto.pasajeros );
+
+        console.log( body.trayecto );
+
+        console.log( `Origen: ${body.trayecto.origen}` );
+        console.log( `Destino: ${body.trayecto.destino}` );
+
+        fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.origen}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
+          .then( res => res.json() )
+          .then( data => {
+
+            console.log( data );
+            const { lat, lng } = data.results[0].geometry.location;
+            setLatitudOrigen( lat );
+            setLongitudOrigen( lng );
+
+          });
+
+        fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.destino}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
+          .then( res => res.json() )
+          .then( data => {
+
+            const { lat, lng } = data.results[0].geometry.location;
+            setLatitudDestino( lat );
+            setLongitudDestino( lng );
+
+          });
 
       } else {
 
@@ -154,6 +189,34 @@ export default function TrayectoID() {
           </div>
         </div>
       </div>
+
+      {
+        longitudOrigen !== 0
+
+          ? <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 50 + 'px', marginTop: 50 + 'px' }}>
+
+            <MapContainer
+              center={{ lat: latitudOrigen, lng: longitudOrigen }}
+              zoom={7}>ç
+
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              />
+
+              <Routing
+                L1={latitudOrigen}
+                L2={longitudOrigen}
+                L3={latitudDestino}
+                L4={longitudDestino}
+              />
+
+            </MapContainer>
+          </div>
+          : <></>
+      }
+
+
     </div>
   );
 
