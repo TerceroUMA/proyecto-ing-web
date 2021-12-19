@@ -5,9 +5,8 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useHistory } from 'react-router';
 
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { IconLocation } from '../components/IconLoacation';
 import Routing from './Rotuing';
 
 export default function TrayectoID() {
