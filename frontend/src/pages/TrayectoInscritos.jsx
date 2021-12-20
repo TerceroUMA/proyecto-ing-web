@@ -72,10 +72,10 @@ export default function TrayectosCreados() {
   };
 
   return (
-    <div className="home-container">
+    <div className="trayectos-container">
       {trayectos.map( ({ uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, fechaDeSalida, horaDeSalida, periodicidad, plazasDisponibles }) => (
         <div
-          key={uuidTrayecto} className="trayectos-container">
+          key={uuidTrayecto}>
           <div className="trayecto">
             <img src={'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages1.autocasion.com%2Funsafe%2F900x600%2Factualidad%2Fwp-content%2Fuploads%2F2013%2F12%2F_main_image_146785_52b30d8a6f62f.jpg&f=1&nofb=1'} />
             <div className="trayecto-info">

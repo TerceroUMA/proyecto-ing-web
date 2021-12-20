@@ -66,3 +66,22 @@ export const fetchUrlencoded = ( endpoint, data, method = 'GET' ) => {
   }
 
 };
+
+export const fetchFormData = ( endpoint, data, method = 'GET' ) => {
+
+  const url = `${baseUrl}/${endpoint}`;
+
+  if ( method === 'GET' ) {
+
+    return fetch( url );
+
+  } else {
+
+    return fetch( url, {
+      method,
+      body: data
+    });
+
+  }
+
+};

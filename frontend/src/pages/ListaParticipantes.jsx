@@ -30,8 +30,12 @@ export default function ListaParticipantes() {
 
       if ( body.ok ) {
 
+        const r = await fetchUrlencoded( `users?uuid=${body.trayecto.idConductor}` );
+        const a = await r.json();
 
-        setTrayecto( body.trayecto );
+        const ax = body.trayecto;
+        ax.conductorObject = a.usuario;
+        setTrayecto( ax );
 
         const arr = [];
         for ( let p = 0; p < body.trayecto.pasajeros.length; p++ ) {
@@ -39,7 +43,11 @@ export default function ListaParticipantes() {
           const respuesta = await fetchUrlencoded( `users?uuid=${body.trayecto.pasajeros[p]}` );
           const aux = await respuesta.json();
 
-          arr.push({ nombre: aux.usuario.nombre + ' ' + aux.usuario.apellidos, id: body.trayecto.pasajeros[p] });
+          arr.push({
+            id: body.trayecto.pasajeros[p],
+            nombre: aux.usuario.nombre + ' ' + aux.usuario.apellidos,
+            imagen: aux.usuario.imagen
+          });
 
         };
 
@@ -91,7 +99,7 @@ export default function ListaParticipantes() {
       <h3> Conductor: </h3>
       <div className="usuario-container">
         <div className="usuario-foto">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1024px-User_icon_2.svg.png"/>
+          <img src={trayecto.conductorObject.imagen}/>
         </div>
 
         <div className="usuario-info">
@@ -107,7 +115,7 @@ export default function ListaParticipantes() {
 
           <div key={k} className="usuario-container">
             <div className="usuario-foto">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1024px-User_icon_2.svg.png"/>
+              <img src={k.imagen}/>
             </div>
             <div className="usuario-info">
               <Link replace to={{ pathname: '/users', search: `?uuid=${k.id}` }}> {k.nombre} </Link>
