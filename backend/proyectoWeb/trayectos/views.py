@@ -36,12 +36,10 @@ class Trayectos(View):
         encontrado = False
         contador = 0
 
-        print(data)
-
         while(not encontrado and contador < len(data)):
             encontrado = self.comprobarCaracteres(
                 list(data.values())[contador])
-            
+
             contador = contador + 1
 
         if(encontrado):
@@ -184,10 +182,9 @@ class Trayectos(View):
 
         return condicionNull, JsonResponse({"ok:": False, "msg": 'Existe algún campo vacío'}, safe=False)
 
+
     def post(self, request):
         data = request.POST.dict()
-
-        print(data)
 
         vacio, jsonDataVacio = self.paramVacio(data)
 
@@ -242,7 +239,9 @@ class Trayectos(View):
     # Actualiza los datos del trayecto que coincida con el id proporcionado.
 
     def put(self, request):
+
         data = QueryDict(request.body)
+        
         vacio, jsonDataVacio = self.paramVacio(data)
 
         if(not vacio):
@@ -255,6 +254,7 @@ class Trayectos(View):
                 if(self.trayectos.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
                     return JsonResponse({"ok": False, "msg": 'No se ha ningun trayecto con ese id'}, safe=False)
 
+            
                 newvalues = {"$set": {
                     "origen": data["origen"],
                     "destino": data["destino"],
@@ -265,7 +265,7 @@ class Trayectos(View):
                     "plazasDisponibles": data["plazasDisponibles"],
                     "fechaDeSalida": data["fechaDeSalida"],
                     "horaDeSalida": data["horaDeSalida"],
-                    "periodicidad": data["periodicidad"]
+                    "periodicidad": data["periodicidad"],
                 }
                 }
 
