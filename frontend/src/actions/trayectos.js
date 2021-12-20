@@ -2,9 +2,9 @@
 import { fetchFormData, fetchUrlencoded } from '../helpers/fetch';
 import Swal from 'sweetalert2';
 
-export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, SendToTrayectosCreados ) => {
+export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, sendToTrayectosCreados ) => {
 
-  return async ( dispatch ) => {
+  return async ( ) => {
 
     try {
 
@@ -33,7 +33,7 @@ export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, durac
           confirmButtonText: 'Aceptar',
           willClose: () => {
 
-            SendToTrayectosCreados();
+            sendToTrayectosCreados();
 
           }
         });
@@ -62,9 +62,9 @@ export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, durac
 
 };
 
-export const borrarTrayecto = ( uuidTrayecto, SendToTrayectosCreados ) => {
+export const borrarTrayecto = ( uuidTrayecto, sendToTrayectosCreados ) => {
 
-  return async ( dispatch ) => {
+  return async ( ) => {
 
     const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto }, 'DELETE' );
     const data = await respuesta.json();
@@ -78,7 +78,7 @@ export const borrarTrayecto = ( uuidTrayecto, SendToTrayectosCreados ) => {
         confirmButtonText: 'Aceptar',
         willClose: () => {
 
-          SendToTrayectosCreados();
+          sendToTrayectosCreados();
 
         }
       });
