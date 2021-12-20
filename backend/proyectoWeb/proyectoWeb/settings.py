@@ -31,7 +31,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = False
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'usuarios',
     'trayectos',
+    'conversaciones',
 ]
 
 MIDDLEWARE = [
