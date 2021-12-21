@@ -7,6 +7,8 @@ import { useHistory } from 'react-router';
 import '../styles/pages/usuarios.css';
 import { Link } from 'react-router-dom';
 
+import '../styles/pages/lista-participantes.css';
+
 
 export default function ListaParticipantes() {
 
@@ -93,8 +95,8 @@ export default function ListaParticipantes() {
 
 
   return (
-    <div style={{ marginLeft: 25 + 'px', marginTop: 15 + 'px' }}>
-      <h1> Lista de Participantes </h1>
+    <div className="lista-participantes-container">
+      <h1 style={{ width: 100 + '%' }}> Lista de Participantes </h1>
       <br></br>
       <h3> Conductor: </h3>
       <div className="usuario-container">
@@ -113,7 +115,7 @@ export default function ListaParticipantes() {
       {
         pasajeros.map( k => (
 
-          <div key={k} className="usuario-container">
+          <div key={k.id} className="usuario-container">
             <div className="usuario-foto">
               <img src={k.imagen}/>
             </div>
@@ -128,7 +130,6 @@ export default function ListaParticipantes() {
         ) )
       }
       <button className="btn btn-success" onClick={() => handleVolver( idTrayecto ) }> Volver </button>
-
     </div>
   );
 
