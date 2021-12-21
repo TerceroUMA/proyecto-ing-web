@@ -119,7 +119,7 @@ export default function UsuarioID() {
           <div key={v.uuid} className="comentarios-container">
             <div className="comentario">
               <div className="contenido-container">
-                <p> {v.emisor} : {v.comentario} </p>
+                <p> {v.nombre} : {v.comentario} </p>
               </div>
               <div className="nota-container">
                 {
