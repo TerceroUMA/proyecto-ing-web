@@ -231,7 +231,7 @@ export default function TrayectoID() {
 
       {
 
-        longitudOrigen !== 0
+        longitudOrigen !== 0 && longitudDestino !== 0
 
           ? <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 50 + 'px', marginTop: 50 + 'px' }}>
 
