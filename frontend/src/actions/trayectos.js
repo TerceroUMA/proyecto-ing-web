@@ -1,9 +1,9 @@
 import { fetchFormData, fetchUrlencoded } from '../helpers/fetch';
 import Swal from 'sweetalert2';
 
-export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, SendToTrayectosCreados ) => {
+export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, imagen, sendToTrayectosCreados ) => {
 
-  return async ( dispatch ) => {
+  return async ( ) => {
 
     try {
 
@@ -32,7 +32,7 @@ export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, durac
           confirmButtonText: 'Aceptar',
           willClose: () => {
 
-            SendToTrayectosCreados();
+            sendToTrayectosCreados();
 
           }
         });
@@ -61,9 +61,9 @@ export const crearTrayecto = ( origen, destino, tipoDeVehiculo, conductor, durac
 
 };
 
-export const borrarTrayecto = ( uuidTrayecto, SendToTrayectosCreados ) => {
+export const borrarTrayecto = ( uuidTrayecto, sendToTrayectosCreados ) => {
 
-  return async ( dispatch ) => {
+  return async ( ) => {
 
     const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto }, 'DELETE' );
     const data = await respuesta.json();
@@ -77,7 +77,48 @@ export const borrarTrayecto = ( uuidTrayecto, SendToTrayectosCreados ) => {
         confirmButtonText: 'Aceptar',
         willClose: () => {
 
-          SendToTrayectosCreados();
+          sendToTrayectosCreados();
+
+        }
+      });
+
+    } else {
+
+      if ( data.msg ) {
+
+        Swal.fire( 'Error', data.msg, 'error' );
+
+      } else {
+
+        Swal.fire( 'Error', data.errorsArray[0], 'error' );
+
+      }
+
+    }
+
+
+  };
+
+};
+
+export const actualizarTrayecto = ( uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, sendToTrayectosCreados ) => {
+
+  return async ( ) => {
+
+
+    const respuesta = await fetchUrlencoded( 'trayectos', { uuid: uuidTrayecto, origen, destino, tipoDeVehiculo, conductor, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad }, 'PUT' );
+    const data = await respuesta.json();
+
+    if ( data.ok ) {
+
+      Swal.fire({
+        title: 'Trayecto Actualizado',
+        text: data.msg,
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        willClose: () => {
+
+          sendToTrayectosCreados();
 
         }
       });

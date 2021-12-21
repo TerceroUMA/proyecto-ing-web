@@ -41,7 +41,7 @@ const CrearTrayecto = () => {
     }
   });
 
-  const SendToTrayectosCreados = () => {
+  const sendToTrayectosCreados = () => {
 
     history.push( '/trayectosCreados' );
 
@@ -57,7 +57,7 @@ const CrearTrayecto = () => {
 
     } else {
 
-      dispatch( crearTrayecto( origen, destino, tipoDeVehiculo, uuid, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, file[0], SendToTrayectosCreados ) );
+      dispatch( crearTrayecto( origen, destino, tipoDeVehiculo, uuid, duracion, precio, plazasDisponibles, fechaDeSalida, horaDeSalida, periodicidad, file[0], sendToTrayectosCreados ) );
 
     }
 
@@ -65,13 +65,13 @@ const CrearTrayecto = () => {
 
   return (
     <div className="auth__container">
-      <h1 className="auth__title">
-        Crear Nuevo Trayecto
-      </h1>
       <form
         className="auth__form"
         onSubmit={handleOnSubmit}
       >
+        <h1 className="auth__title">
+        Crear Nuevo Trayecto
+        </h1>
         {/* Se podría añadir */}
         {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
         <input

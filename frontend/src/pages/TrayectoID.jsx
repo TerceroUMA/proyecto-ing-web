@@ -47,15 +47,11 @@ export default function TrayectoID() {
         setTrayecto( body.trayecto );
         setPasajeros( body.trayecto.pasajeros );
 
-        console.log( body.trayecto );
-        console.log( `Origen: ${body.trayecto.origen}` );
-        console.log( `Destino: ${body.trayecto.destino}` );
-
         fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.origen}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
           .then( res => res.json() )
           .then( data => {
 
-            console.log( data );
+            console.log( 'origen: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudOrigen( lat );
             setLongitudOrigen( lng );
@@ -66,6 +62,7 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
+            console.log( 'destino: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudDestino( lat );
             setLongitudDestino( lng );
