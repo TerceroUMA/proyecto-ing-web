@@ -24,7 +24,7 @@ export const registrarse = ( nombre, correo, password, confirmarPassword, apelli
       formData.append( 'localidad', localidad );
       formData.append( 'imagen', file );
 
-      const respuesta = await fetchFormData( 'users', formData, 'POST' );
+      const respuesta = await fetchFormData( 'users/registrarse', formData, 'POST' );
       const data = await respuesta.json();
 
       if ( data.ok ) {

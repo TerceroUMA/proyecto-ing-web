@@ -28,7 +28,7 @@ const CrearTrayecto = () => {
 
   const [file, setFile] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*',
+    accept: 'image/',
     onDrop: acceptedFiles => {
 
       setFile(
@@ -64,18 +64,18 @@ const CrearTrayecto = () => {
   };
 
   return (
-    <div className="auth__container">
+    <div className="authcontainer">
       <form
-        className="auth__form"
+        className="authform"
         onSubmit={handleOnSubmit}
       >
         <h1 className="auth__title">
         Crear Nuevo Trayecto
         </h1>
-        {/* Se podría añadir */}
+        {/ Se podría añadir */}
         {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="text"
           name="origen"
           value={origen}
@@ -83,7 +83,7 @@ const CrearTrayecto = () => {
           placeholder="Origen del trayecto"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="text"
           name="destino"
           value={destino}
@@ -91,7 +91,7 @@ const CrearTrayecto = () => {
           placeholder="Destino del trayecto"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="text"
           name="tipoDeVehiculo"
           value={tipoDeVehiculo}
@@ -99,7 +99,7 @@ const CrearTrayecto = () => {
           placeholder="Marca y modelo del vehículo"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="number"
           name="duracion"
           value={duracion}
@@ -107,7 +107,7 @@ const CrearTrayecto = () => {
           placeholder="Duración aprox. en min"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="number"
           name="precio"
           value={precio}
@@ -116,7 +116,7 @@ const CrearTrayecto = () => {
           autoComplete="off"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="number"
           name="plazasDisponibles"
           value={plazasDisponibles}
@@ -124,7 +124,7 @@ const CrearTrayecto = () => {
           placeholder="Plazas disponibles para el trayecto"
         />
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="date"
           name="fechaDeSalida"
           value={fechaDeSalida}
@@ -133,7 +133,7 @@ const CrearTrayecto = () => {
         />
 
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="time"
           name="horaDeSalida"
           value={horaDeSalida}
@@ -142,7 +142,7 @@ const CrearTrayecto = () => {
         />
 
         <input
-          className="sigIn__option form-control"
+          className="sigInoption form-control"
           type="number"
           name="periodicidad"
           value={periodicidad}
@@ -156,7 +156,7 @@ const CrearTrayecto = () => {
       </form>
 
       <div className="foto-container">
-        <h1 className="auth__title">Foto del vehiculo</h1>
+        <h1 className="authtitle">Foto del vehiculo</h1>
         <div className="drag-and-drop" {...getRootProps()}>
           <input {...getInputProps()} />
           {
