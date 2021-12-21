@@ -120,7 +120,7 @@ export default function ListaParticipantes() {
               <img src={k.imagen}/>
             </div>
             <div className="usuario-info">
-              <Link replace to={{ pathname: '/users', search: `?uuid=${k.id}` }}> {k.nombre} </Link>
+              <Link replace to={{ pathname: '/users', search: `?uuid=${k.id}&valoracion=1` }}> {k.nombre} </Link>
               <br></br>
             </div>
 
