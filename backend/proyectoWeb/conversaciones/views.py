@@ -168,3 +168,34 @@ class MisConversacion(View):
                 return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
             else:
                 return JsonResponse({"ok": True, "conversacion": conv})
+
+    def post(self, request):
+        uuid = request.GET.get("uuid")
+
+        conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
+
+        if(conv == None):
+            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
+
+        data = QueryDict(request.body)
+        contador = 0
+        encontrado = False
+
+        while(not encontrado and contador < len(data)):
+            encontrado = self.comprobarCaracteres(
+                list(data.values())[contador])
+
+            contador = contador + 1
+
+        if(encontrado):
+            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
+
+        newValues = {
+            "uuid": str(uuid.uuid1()),
+            "emisor": data["usuario"],
+            "receptor": conv["emisor"],
+            "asunto": "Re: " + conv["asunto"],
+            "texto": data["texto"],
+            "fecha": datetime.now(),
+            "visto": 0
+        }
