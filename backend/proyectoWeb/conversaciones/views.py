@@ -6,8 +6,6 @@ from pymongo import MongoClient
 import certifi
 import uuid
 
-from pymongo.message import delete
-
 # Create your views here.
 
 
