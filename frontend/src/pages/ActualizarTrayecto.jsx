@@ -51,7 +51,7 @@ const ActualizarTrayecto = () => {
         onSubmit={handleOnSubmit}
       >
         <h1 className="auth__title">
-        Crear Nuevo Trayecto
+        Editar Trayecto
         </h1>
         {/* Se podría añadir */}
         {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
