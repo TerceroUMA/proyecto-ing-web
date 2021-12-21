@@ -1,0 +1,28 @@
+
+.lista-participantes-container {
+  margin-top: 15px;
+  width: 100%;
+  margin-left: 25px;
+}
+
+@media (min-width: 768px) {
+  .lista-participantes-page-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  .lista-participantes-container {
+    width: 40%;
+  }
+
+  .derecha-container {
+    width: 60%;
+  }
+
+  .form-comentario textarea {
+    margin-top: 50px;
+    width: 500px;
+    height: 200px;
+  }
+}
