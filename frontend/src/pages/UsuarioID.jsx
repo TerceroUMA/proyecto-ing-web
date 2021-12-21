@@ -5,6 +5,8 @@ import '../styles/home.css';
 import { useSelector } from 'react-redux';
 import { useForm } from '../hooks/useForm';
 
+import '../styles/pages/usuarioId.css';
+
 export default function UsuarioID() {
 
   const query = useQuery();
@@ -73,9 +75,9 @@ export default function UsuarioID() {
   </svg>;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 50 + 'px' }}>
-        <div className="card" style={{ width: 18 + 'rem' }}>
+    <>
+      <div className="lista-participantes-page-container">
+        <div className="card" style={{ width: 18 + 'rem', marginTop: '20px' }}>
           <img src={imagen} className="card-img-top" alt="..."/>
           <div className="card-body">
             <h5 className="card-title"> <strong> Usuario: </strong> {usuario.nombre} {usuario.apellidos} </h5>
@@ -90,32 +92,77 @@ export default function UsuarioID() {
         <div className="derecha-container">
           <form className="form-comentario">
             <textarea
-              placeholder="Escribe un comentario..."
+              placeholder="Escribe un comentario para este usuario..."
               value={comentario}
               onChange={handleChange}
               name="comentario"
             />
             <button className="btn btn-primary">Nuevo comentario</button>
           </form>
+        </div>
+      </div>
 
-          <div className="comentarios-container">
-            <div className="comentario">
-              <div className="contenido-container">
+      <div className="comentarios-container">
+        <div className="comentario">
+          <div className="contenido-container">
             Javier: Holas
-              </div>
-              <div className="nota-container">
-                {
-                  estrellas.map( e => estrellaLlena )
-                }
-                {
-                  new Array( 5 - estrellas.length ).fill( estrellaVacia )
-                }
-              </div>
-            </div>
+          </div>
+          <div className="nota-container">
+            {
+              estrellas.map( e => estrellaLlena )
+            }
+            {
+              new Array( 5 - estrellas.length ).fill( estrellaVacia )
+            }
           </div>
         </div>
       </div>
-    </div>
+      <div className="comentarios-container">
+        <div className="comentario">
+          <div className="contenido-container">
+            Javier: Holas
+          </div>
+          <div className="nota-container">
+            {
+              estrellas.map( e => estrellaLlena )
+            }
+            {
+              new Array( 5 - estrellas.length ).fill( estrellaVacia )
+            }
+          </div>
+        </div>
+      </div>
+      <div className="comentarios-container">
+        <div className="comentario">
+          <div className="contenido-container">
+            Javier: Holas
+          </div>
+          <div className="nota-container">
+            {
+              estrellas.map( e => estrellaLlena )
+            }
+            {
+              new Array( 5 - estrellas.length ).fill( estrellaVacia )
+            }
+          </div>
+        </div>
+      </div>
+      <div className="comentarios-container">
+        <div className="comentario">
+          <div className="contenido-container">
+            Javier: Holas
+          </div>
+          <div className="nota-container">
+            {
+              estrellas.map( e => estrellaLlena )
+            }
+            {
+              new Array( 5 - estrellas.length ).fill( estrellaVacia )
+            }
+          </div>
+        </div>
+      </div>
+    </>
   );
 
 }

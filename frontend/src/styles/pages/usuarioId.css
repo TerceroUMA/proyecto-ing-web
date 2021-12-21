@@ -9,6 +9,7 @@
 }
 
 .derecha-container {
+  width: 100%;
 }
 
 
@@ -31,7 +32,6 @@
   justify-content: space-evenly;
 }
 
-
 .nota-container p {
   height: 20px;
 }
@@ -53,11 +53,13 @@
 
 .form-comentario button {
   margin-top: 10px;
+  width: 90%;
 }
 
 .form-comentario textarea {
   margin-top: 50px;
-  width: 300px;
+  width: 90%;
+  /* width: 300px; */
   height: 100px;
 }
 
@@ -67,4 +69,13 @@
     align-items: center;
     justify-content: space-evenly;
   }
+
+  .comentario { 
+    width: 500px;
+  }
+
+  .form-comentario button {
+    width: 500px;
+  }
+
 }
