@@ -16,7 +16,6 @@ export default function UsuarioID() {
   const [hayDatos, setHayDatos] = useState( false );
   const [usuario, setUsuario] = useState({});
   const [valoraciones, setValoraciones] = useState([]);
-  const [estrellas, setEstrellas] = useState([]);
 
   const [formValues, handleChange] = useForm({
     comentario: ''
