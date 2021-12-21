@@ -63,27 +63,31 @@ class Users(View):
 
                 return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el id introducido'}, safe=False)
             else:
-                valoracion = int(request.GET.get("valoracion"))
-                lista = list(self.valoraciones.find(
-                    {"receptor": us["uuid"]}, {"_id": 0}))
 
-                if valoracion == 1:  # Más recientes
-                    lista = sorted(lista, key=lambda x: x["fecha"])
-                    lista.reverse()
-                elif valoracion == 2:  # Más antiguos
-                    lista = sorted(lista, key=lambda x: x["fecha"])
-                elif valoracion == 3:  # Peor puntuacion
-                    lista = sorted(lista, key=lambda x: x["nota"])
-                    lista.reverse()
-                elif valoracion == 4:  # Mejor puntuacion
-                    lista = sorted(lista, key=lambda x: x["nota"])
+                valoracion = request.GET.get("valoracion")
+                if valoracion != None and valoracion != 'null':
+                    valoracion = int(valoracion)
+                    lista = list(self.valoraciones.find(
+                        {"receptor": us["uuid"]}, {"_id": 0}))
 
-                for v in lista:
-                    emisor = self.users.find_one(
-                        {"uuid": v["emisor"]}, {"_id": 0})
-                    v["nombre"] = emisor[emisor["nombre"] +
-                                         " " + emisor["apellidos"]]
-                return JsonResponse({"ok": True, "usuario": us, "valoraciones": lista}, safe=False)
+                    if valoracion == 1:  # Más recientes
+                        lista = sorted(lista, key=lambda x: x["fecha"])
+                        lista.reverse()
+                    elif valoracion == 2:  # Más antiguos
+                        lista = sorted(lista, key=lambda x: x["fecha"])
+                    elif valoracion == 3:  # Peor puntuacion
+                        lista = sorted(lista, key=lambda x: x["nota"])
+                        lista.reverse()
+                    elif valoracion == 4:  # Mejor puntuacion
+                        lista = sorted(lista, key=lambda x: x["nota"])
+
+                    for v in lista:
+                        emisor = self.users.find_one(
+                            {"uuid": v["emisor"]}, {"_id": 0})
+                        v["nombre"] = emisor["nombre"] + \
+                            " " + emisor["apellidos"]
+                    return JsonResponse({"ok": True, "usuario": us, "valoraciones": lista}, safe=False)
+                return JsonResponse({"ok": True, "usuario": us, "valoraciones": list(self.valoraciones.find({}, {"_id": 0}))}, safe=False)
 
         # Consulta parametrizada por email
         elif (request.GET.get("correo") != None):
@@ -101,6 +105,95 @@ class Users(View):
                     lista.append(u)
 
             return JsonResponse({"ok": True, "usuarios": lista}, safe=False)
+
+    # Inserta un usuario en la base de datos (Registrarse)
+    def comprobarCaracteres(self, dato):
+        if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
+            return True
+        else:
+            return False
+
+    def post(self, request):
+        receptor = request.GET.get("uuid")
+
+        data = QueryDict(request.body)
+
+        encontrado = False
+        contador = 0
+        while(not encontrado and contador < len(data)):
+            encontrado = self.comprobarCaracteres(
+                list(data.values())[contador])
+            contador = contador + 1
+
+        newValues = {
+            "uuid": str(uuid.uuid1()),
+            "emisor": data["emisor"],
+            "receptor": receptor,
+            "nota": int(data["nota"]),
+            "comentario": data["comentario"],
+            "fecha": datetime.now()
+        }
+
+        self.valoraciones.insert_one(newValues)
+
+        val = self.valoraciones.find_one(
+            {"uuid": newValues["uuid"]}, {"_id": 0})
+        if val == None:
+            return JsonResponse({"ok": False, "msg": "No existe ninguna valoracion con esta id"}, safe=False)
+        else:
+            return JsonResponse({"ok": True, "valoracion": val})
+
+    # Actualiza los datos del usuario que coincida con el id proporcionado.
+
+    def put(self, request):
+        data = QueryDict(request.body)
+        filter = {'uuid': data["uuid"]}
+
+        if(self.users.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
+
+        vacio, jsonDataVacio = self.paramVacio(data)
+        if(not vacio):
+
+            ok, jsonData = self.comprobaciones(data, "put")
+
+            if(ok):
+
+                salt = bcrypt.gensalt()
+                hashed = bcrypt.hashpw(data["password"].encode(), salt)
+
+                newvalues = {"$set": {'nombre': data["nombre"], 'apellidos': data["apellidos"], 'password': hashed,
+                                      'edad': data["edad"], 'correo': data["correo"], 'telefono': data["telefono"], 'localidad': data["localidad"]}}
+                self.users.update_one(filter, newvalues)
+                us = self.users.find_one({"uuid": data["uuid"]}, {
+                    "_id": 0, "password": 0})
+                return JsonResponse({"ok": True, "usuario": us})
+
+            else:
+                return jsonData
+        else:
+            return jsonDataVacio
+
+    # Borra al usuario que coincida con el id proporcionado.
+    def delete(self, request):
+        data = QueryDict(request.body)
+        us = self.users.find_one({"uuid": data["uuid"]}, {"_id": 0})
+        if us == None:
+            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
+
+        self.users.delete_one(us)
+        return JsonResponse({"ok": True})
+
+
+class Registrarse(View):
+
+    def __init__(self):
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
+
+        db = client['IngWeb']
+        self.users = db.users
+        self.valoraciones = db.valoraciones
 
     def comprobarCaracteres(self, dato):
         if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
@@ -141,10 +234,7 @@ class Users(View):
 
         return condicionNull, JsonResponse({"ok:": False, "msg": 'No se pueden introducir campos vacíos'}, safe=False)
 
-    # Inserta un usuario en la base de datos (Registrarse)
-
     def post(self, request):
-
         data = request.POST.dict()
 
         salt = bcrypt.gensalt()
@@ -189,99 +279,3 @@ class Users(View):
 
             else:
                 return jsonDataVacio
-
-    # Actualiza los datos del usuario que coincida con el id proporcionado.
-    def put(self, request):
-        data = QueryDict(request.body)
-        filter = {'uuid': data["uuid"]}
-
-        if(self.users.find_one({"uuid": data["uuid"]}, {"_id": 0}) == None):
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
-
-        vacio, jsonDataVacio = self.paramVacio(data)
-        if(not vacio):
-
-            ok, jsonData = self.comprobaciones(data, "put")
-
-            if(ok):
-
-                salt = bcrypt.gensalt()
-                hashed = bcrypt.hashpw(data["password"].encode(), salt)
-
-                newvalues = {"$set": {'nombre': data["nombre"], 'apellidos': data["apellidos"], 'password': hashed,
-                                      'edad': data["edad"], 'correo': data["correo"], 'telefono': data["telefono"], 'localidad': data["localidad"]}}
-                self.users.update_one(filter, newvalues)
-                us = self.users.find_one({"uuid": data["uuid"]}, {
-                    "_id": 0, "password": 0})
-                return JsonResponse({"ok": True, "usuario": us})
-
-            else:
-                return jsonData
-        else:
-            return jsonDataVacio
-
-    # Borra al usuario que coincida con el id proporcionado.
-    def delete(self, request):
-        data = QueryDict(request.body)
-        us = self.users.find_one({"uuid": data["uuid"]}, {"_id": 0})
-        if us == None:
-            return JsonResponse({"ok": False, "msg": 'No se ha encontrado un usuario con el id introducido'}, safe=False)
-
-        self.users.delete_one(us)
-        return JsonResponse({"ok": True})
-
-
-class Valoracion(View):
-
-    def __init__(self):
-        client = MongoClient(
-            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
-
-        db = client['IngWeb']
-        self.users = db.users
-        self.valoraciones = db.valoraciones
-
-    def get(self, request):
-        uuid = request.GET.get("valoracion")
-
-        val = self.valoraciones.find_one({"uuid": uuid}, {"_id": 0})
-        if val == None:
-            return JsonResponse({"ok": False, "msg": "No existe ninguna valoracion con esta id"}, safe=False)
-        else:
-            return JsonResponse({"ok": True, "valoracion": val})
-
-    def comprobarCaracteres(self, dato):
-        if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
-            return True
-        else:
-            return False
-
-    def post(self, request):
-        uuid = request.GET.get("uuid")
-
-        data = QueryDict(request.body)
-
-        encontrado = False
-        contador = 0
-        while(not encontrado and contador < len(data)):
-            encontrado = self.comprobarCaracteres(
-                list(data.values())[contador])
-            contador = contador + 1
-
-        newValues = {
-            "uuid": str(uuid.uuid1()),
-            "emisor": data["uuid"],
-            "receptor": uuid,
-            "nota": int(data["nota"]),
-            "comentario": data["comentario"],
-            "fecha": datetime.now()
-        }
-
-        self.valoraciones.insert_one(newValues)
-
-        val = self.valoraciones.find_one(
-            {"uuid": newValues["uuid"]}, {"_id": 0})
-        if val == None:
-            return JsonResponse({"ok": False, "msg": "No existe ninguna valoracion con esta id"}, safe=False)
-        else:
-            return JsonResponse({"ok": True, "valoracion": val})
