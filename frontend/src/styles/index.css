@@ -12,3 +12,8 @@
   font-family: Helvetica, Arial, sans-serif;
   margin: 0px;
 }
+
+.leaflet-container {
+  width: 100vw;
+  height: 50vh;
+} 
