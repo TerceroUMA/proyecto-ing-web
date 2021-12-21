@@ -97,7 +97,17 @@ export default function UsuarioID() {
               onChange={handleChange}
               name="comentario"
             />
-            <button className="btn btn-primary">Nuevo comentario</button>
+
+            <div style={{ width: '500px', display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+              <select name="nota" className="form-control" style={{ width: '48%' }}>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+              </select>
+              <button className="btn btn-primary" style={{ width: '50%' }}>Crear comentario</button>
+            </div>
           </form>
         </div>
       </div>
