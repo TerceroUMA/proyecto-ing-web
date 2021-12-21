@@ -188,7 +188,7 @@ export default function TrayectoID() {
               href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${baseUrlTweet}${window.location.pathname}`}
               target={'_blank'} rel="canonical noreferrer"
             >
-              <button className="btn btn-primary">
+              <button className="btn btn-outline-primary">
                 Twittear
               </button>
             </a>

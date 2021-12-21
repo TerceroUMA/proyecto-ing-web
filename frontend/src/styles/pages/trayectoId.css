@@ -17,16 +17,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #2a2a72;
+  background-image: linear-gradient(180deg, #202032 -40%, #009ffd 105%);
+  color: white;
 }
 
 .twitter-container textarea {
   width: 400px;
   margin-bottom: 20px;
   margin-top: 20px;
+  height: 200px;
 }
 
 .twitter-container h3 {
   margin-top: 20px;
+  font-size: 30px;
 }
 
 textarea:focus {
@@ -37,12 +42,11 @@ textarea:focus {
 }
 
 .disabled {
-  color: gray;
+  color: white;
 }
 
 .datos-container {
   width: 300px;
-  height: 100px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -50,6 +54,8 @@ textarea:focus {
 
 .datos-container button {
   margin-left: 30px;
+  color: white;
+  border-color: white;
 }
 
 .datos-container p {
