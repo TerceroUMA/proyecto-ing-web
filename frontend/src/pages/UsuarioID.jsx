@@ -7,6 +7,7 @@ import { useForm } from '../hooks/useForm';
 import '../styles/pages/usuarioId.css';
 import { useSelector } from 'react-redux';
 
+
 export default function UsuarioID() {
 
   const { uuid: usuarioConectado } = useSelector( state => state.auth );
@@ -18,29 +19,31 @@ export default function UsuarioID() {
   const [valoraciones, setValoraciones] = useState([]);
 
   const [formValues, handleChange] = useForm({
-    comentario: ''
+    comentario: '',
+    nota: '1',
+    ordenar: valoracion
   });
 
-  const { comentario } = formValues;
+  const { comentario, nota, ordenar } = formValues;
 
   useEffect( async () => {
 
     if ( uuid ) {
 
-      const respuesta = await fetchUrlencoded( `users?uuid=${uuid}&valoracion=${valoracion}` );
+      const respuesta = await fetchUrlencoded( `users?uuid=${uuid}&valoracion=${ordenar}` );
       const body = await respuesta.json();
-      setHayDatos( true );
 
       if ( body.ok ) {
 
         setUsuario( body.usuario );
         setValoraciones( body.valoraciones );
+        setHayDatos( true );
 
       }
 
     }
 
-  }, [uuid]);
+  }, [uuid, hayDatos, ordenar]);
 
   if ( !hayDatos ) {
 
@@ -71,8 +74,14 @@ export default function UsuarioID() {
   const handleSubmit = ( e ) => {
 
     e.preventDefault();
-    fetchUrlencoded( `users?uuid=${usuario.uuid}`, { nota: 3, comentario: comentario, emisor: usuarioConectado }, 'POST' );
-    window.location.reload();
+
+    fetchUrlencoded( `users?uuid=${usuario.uuid}`, { nota, comentario: comentario, emisor: usuarioConectado }, 'POST' )
+      .then( respuesta => {
+
+        setHayDatos( false );
+
+      });
+
 
   };
 
@@ -110,7 +119,12 @@ export default function UsuarioID() {
             />
 
             <div style={{ width: '500px', display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
-              <select name="nota" className="form-control" style={{ width: '48%' }}>
+              <select
+                name="nota"
+                className="form-control"
+                style={{ width: '48%' }}
+                onChange={handleChange}
+              >
                 <option value="1">⭐</option>
                 <option value="2">⭐⭐</option>
                 <option value="3">⭐⭐⭐</option>
@@ -123,27 +137,45 @@ export default function UsuarioID() {
         </div>
       </div>
 
-      {
-        valoraciones.map( v => (
-          <div key={v.uuid} className="comentarios-container">
-            <div className="comentario">
-              <div className="contenido-container">
-                <p> {v.nombre} : {v.comentario} </p>
-              </div>
-              <div className="nota-container">
-                {
+      <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', marginTop: '20px' }}>
+        <select
+          className="form-control"
+          style={{ width: '150px' }}
+          defaultValue={ordenar}
+          onChange={( e ) => {
 
-                  new Array( v.nota ).fill( estrellaLlena )
-                }
-                {
-                  new Array( 5 - v.nota ).fill( estrellaVacia )
-                }
-              </div>
-            </div>
-          </div>
-        ) )
+            setHayDatos( false );
+            handleChange( e );
 
-      }
+          }}
+          name="ordenar">
+          <option value="1">Más recientes</option>
+          <option value="2">Más antiguos</option>
+          <option value="3">Mejor puntuación</option>
+          <option value="4">Peor puntuación</option>
+        </select>
+        <div className="comentarios-container">
+          {
+            valoraciones.map( v => (
+              <div key={v.uuid} className="comentario">
+                <div className="contenido-container">
+                  <p> {v.nombre}: {v.comentario} </p>
+                </div>
+                <div className="nota-container">
+                  {
+                    new Array( v.nota ).fill( 0 ).map( ( _, i ) => <span key={i}>{estrellaLlena}</span> )
+                  }
+                  {
+                    new Array( 5 - v.nota ).fill( 0 ).map( ( _, i ) => <span key={i}>{estrellaVacia}</span> )
+                  }
+                </div>
+              </div>
+            ) )
+
+          }
+        </div>
+
+      </div>
 
     </>
   );
