@@ -105,7 +105,7 @@ export default function ListaParticipantes() {
         </div>
 
         <div className="usuario-info">
-          <Link replace to={{ pathname: '/users', search: `?uuid=${trayecto.idConductor}` }}> {trayecto.conductor} </Link>
+          <Link replace to={{ pathname: '/users', search: `?uuid=${trayecto.idConductor}&valoracion=1` }}> {trayecto.conductor} </Link>
         </div>
 
       </div>
