@@ -1,0 +1,23 @@
+.bandeja-entrada-container {
+  width: 100%;
+  height: calc(100vh - 56px); /* Todo el height menos el navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.bandeja-entrada-container h1 {
+  margin-bottom: 50px;
+}
+
+.bandeja-entrada-container > button {
+  margin-bottom: 50px;
+  width: 90%;
+}
+
+@media (min-width: 768px) {
+  .bandeja-entrada-container > button {
+    width: 200px;
+  }
+}

@@ -24,7 +24,9 @@ class Conversacion(View):
 
         if(uuid == None):
             data = QueryDict(request.body)
-            us = {'uuid': data["usuario"]}
+            usID = request.GET.get("idUsuario")
+            usuario = self.usuarios.find_one({"uuid": usID}, {"_id": 0})
+            
             contador = 0
             encontrado = False
 
@@ -38,25 +40,29 @@ class Conversacion(View):
                 return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
 
             lista = []
-            if(data["visto"] == None and data["fecha"] == None and data["correo"] == None):
+            visto = request.GET.get("visto")
+            fecha = request.GET.get("fecha")
+            correo = request.GET.get("correo")
+
+            if(visto == None and fecha == None and correo == None):
                 lista = list(self.conversaciones.find(
-                    {"receptor": us["correo"]}, {"_id": 0}))
+                    {"receptor": usuario["correo"]}, {"_id": 0}))
 
                 return JsonResponse({"ok": True, "conversaciones": lista})
             else:
 
-                if (data["visto"] != None):
+                if (visto != None):
                     lista = lista + \
                         list(self.conversaciones.find(
                             {"visto": 0}, {"_id": 0}))
-                if (data["fecha"] != None):
+                if (fecha != None):
                     lista = lista + \
                         list(self.conversaciones.find(
                             {"fecha": data["fecha"]}, {"_id": 0}))
-                if (data["correo"] != None):
+                if (correo != None):
                     lista = lista + \
                         list(self.conversaciones.find(
-                            {"emisor": data["correo"]}, {"_id": 0}))
+                            {"emisor": correo}, {"_id": 0}))
                 return JsonResponse({"ok": True, "conversaciones": lista})
         else:
             conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
@@ -96,14 +102,16 @@ class Conversacion(View):
 
         if(self.usuarios.find_one({"correo": data["receptor"]}, {"_id": 0}) == None):
             return False, JsonResponse({"ok": False, "msg": "No existe este destinatario"}, safe=False)
-
+            
+        idUsuario = request.GET.get("idUsuario")
+        emisor = self.usuarios.find_one({"uuid": idUsuario}, {"_id": 0})
         newValues = {
             "uuid": str(uuid.uuid1()),
             "receptor": data["receptor"],
-            "emisor": data["usuario"],
+            "emisor": emisor["correo"],
             "asunto": data["asunto"],
             "texto": data["texto"],
-            "fecha": datetime.now,
+            "fecha": datetime.now(),
             "visto": 0
         }
 

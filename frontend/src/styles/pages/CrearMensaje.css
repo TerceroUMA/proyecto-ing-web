@@ -1,0 +1,32 @@
+.crear-mensaje-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin-top: 50px;
+}
+
+.crear-mensaje-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 100%;
+}
+
+.crear-mensaje-container label {
+  margin: 10px 0 10px 0;
+}
+
+.crear-mensaje-container textarea {
+  height: 200px;
+}
+
+.crear-mensaje-container button {
+  width: 100%;
+  margin-top: 10px;
+}
+

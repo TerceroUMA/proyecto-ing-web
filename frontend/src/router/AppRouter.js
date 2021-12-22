@@ -15,6 +15,8 @@ import ListaParticipantes from '../pages/ListaParticipantes';
 import TrayectosInscritos from '../pages/TrayectoInscritos';
 import CrearTrayecto from '../pages/CrearTrayecto';
 import ActualizarTrayecto from '../pages/ActualizarTrayecto';
+import Mensajeria from '../pages/Mensajeria';
+import CrearMensaje from '../pages/CrearMensaje';
 
 export const AppRouter = () => {
 
@@ -43,6 +45,12 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
+          <Route path="/mensajeria/nuevo">
+            <CrearMensaje />
+          </Route>
+          <Route path="/mensajeria/:idUsuario">
+            <Mensajeria />
+          </Route>
           <Route path="/users">
             <UsuarioID />
           </Route>
