@@ -168,7 +168,7 @@ export default function TrayectoID() {
 
   }
 
-  const baseUrlTweet = 'www.youtube.com';
+  const baseUrlTweet = 'https://blabla-car.herokuapp.com/';
 
   return (
     <div>
@@ -249,7 +249,7 @@ export default function TrayectoID() {
             <div className="datos-container">
               <p className="disabled">{317 - tweetText.length - baseUrlTweet.length - window.location.pathname.length}</p>
               <a
-                href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${baseUrlTweet}${window.location.pathname}`}
+                href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${window.location.href}`}
                 target={'_blank'} rel="canonical noreferrer"
               >
                 <button className="btn btn-outline-primary">
