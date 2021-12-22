@@ -116,8 +116,25 @@ class Conversacion(View):
         else:
             return JsonResponse({"ok": True, "conversacion": conv}, safe=False)
 
+    def put(self, request):
+        uuid = request.GET.get("uuid")
 
-class MisConversacion(View):
+        conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
+
+        if(conv == None):
+            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
+
+        self.conversaciones.update_one({"uuid": uuid}, {"$set": {"visto": 1}})
+
+        conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
+
+        if(conv == None):
+            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
+        else:
+            return JsonResponse({"ok": True, "conversacion": conv})
+
+
+class MisMensajes(View):
     def __init__(self):
         client = MongoClient(
             'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
@@ -197,3 +214,12 @@ class MisConversacion(View):
             "fecha": datetime.now(),
             "visto": 0
         }
+
+        self.conversaciones.insert_one(newValues)
+        conv = self.conversaciones.find_one(
+            {"uuid": newValues["uuid"]}, {"_id": 0})
+
+        if(conv == None):
+            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
+        else:
+            return JsonResponse({"ok": True, "conversacion": conv}, safe=False)

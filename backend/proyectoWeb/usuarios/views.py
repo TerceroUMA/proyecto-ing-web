@@ -76,7 +76,7 @@ class Users(View):
                         lista.reverse()
                     elif valoracion == 2:  # Más antiguos
                         lista = sorted(lista, key=lambda x: x["fecha"])
-                    elif valoracion == 3:  # Peor puntuacion
+                    elif valoracion == 3:  # Mejor puntuacion
                         lista = sorted(lista, key=lambda x: x["nota"])
                         lista.reverse()
                     elif valoracion == 4:  # Mejor puntuacion
