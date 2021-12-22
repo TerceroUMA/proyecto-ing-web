@@ -18,6 +18,60 @@
 
 @media (min-width: 768px) {
   .bandeja-entrada-container > button {
-    width: 200px;
+    width: 300px;
+  }
+}
+
+.bandeja-salida-container {
+  width: 100%;
+  height: calc(100vh - 56px); /* Todo el height menos el navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.bandeja-salida-container h1 {
+  margin-bottom: 50px;
+}
+
+.bandeja-salida-container > button {
+  margin-bottom: 50px;
+  width: 90%;
+}
+
+.ver-mensaje-container {
+  width: 100%;
+  height: calc(100vh - 56px); /* Todo el height menos el navbar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.mensaje-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.div-buttons {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-mr-50 {
+  margin-right: 50px;
+}
+
+@media (min-width: 768px) {
+  .bandeja-salida-container > button {
+    width: 300px;
   }
 }

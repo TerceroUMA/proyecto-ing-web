@@ -74,6 +74,7 @@ class Conversacion(View):
         if(conv == None):
             return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
         else:
+            self.conversaciones.delete_one(conv)
             return JsonResponse({"ok": True, "msg": "Conversacion eliminada"}, safe=False)
 
     def comprobarCaracteres(self, dato):
@@ -100,13 +101,11 @@ class Conversacion(View):
             contador = contador + 1
 
         if(encontrado):
-            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
+            return JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
 
         if(self.usuarios.find_one({"correo": data["destinatario"]}, {"_id": 0}) == None):
-            return False, JsonResponse({"ok": False, "msg": "No existe este destinatario"}, safe=False)
+            return JsonResponse({"ok": False, "msg": "No existe este destinatario"}, safe=False)
             
-        idUsuario = request.GET.get("idUsuario")
-        emisor = self.usuarios.find_one({"uuid": idUsuario}, {"_id": 0})
         newValues = {
             "uuid": str(uuid.uuid1()),
             "receptor": data["destinatario"],
@@ -207,48 +206,3 @@ class MisMensajes(View):
             return True
         else:
             return False
-
-    def post(self, request):
-        idConv = request.GET.get("uuid")
-
-        conv = self.conversaciones.find_one({"uuid": idConv}, {"_id": 0})
-
-        if(conv == None):
-            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
-
-        data = QueryDict(request.body)
-        contador = 0
-        encontrado = False
-
-        while(not encontrado and contador < len(data)):
-            encontrado = self.comprobarCaracteres(
-                list(data.values())[contador])
-
-            contador = contador + 1
-
-        if(encontrado):
-            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
-
-        id = request.GET.get("idUsuario")
-        us = self.usuarios.find_one({"uuid": id}, {"_id": 0})
-
-        if(us == None):
-            return JsonResponse({"ok": False, "msg": "No existe ningun usuario con este id"}, safe=False)
-        newValues = {
-            "uuid": str(uuid.uuid1()),
-            "emisor": us["correo"],
-            "receptor": conv["emisor"],
-            "asunto": "Re: " + conv["asunto"],
-            "texto": data["texto"],
-            "fecha": datetime.now(),
-            "visto": 0
-        }
-
-        self.conversaciones.insert_one(newValues)
-        conv = self.conversaciones.find_one(
-            {"uuid": newValues["uuid"]}, {"_id": 0})
-
-        if(conv == None):
-            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
-        else:
-            return JsonResponse({"ok": True, "conversacion": conv}, safe=False)

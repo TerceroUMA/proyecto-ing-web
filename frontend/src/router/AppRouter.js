@@ -15,8 +15,11 @@ import ListaParticipantes from '../pages/ListaParticipantes';
 import TrayectosInscritos from '../pages/TrayectoInscritos';
 import CrearTrayecto from '../pages/CrearTrayecto';
 import ActualizarTrayecto from '../pages/ActualizarTrayecto';
-import Mensajeria from '../pages/Mensajeria';
 import CrearMensaje from '../pages/CrearMensaje';
+import BandejaEntrada from '../pages/BandejaEntrada';
+import BandejaSalida from '../pages/BandejaSalida';
+import VerMensajes from '../pages/VerMensajes';
+import Paypal from '../pages/Paypal';
 
 export const AppRouter = () => {
 
@@ -45,11 +48,20 @@ export const AppRouter = () => {
 
         {/* TODO: Cambiar a rutas privadas */}
         <Switch>
-          <Route path="/mensajeria/nuevo">
+          <Route path="/paypal">
+            <Paypal />
+          </Route>
+          <Route path="/mensajes/nuevo">
             <CrearMensaje />
           </Route>
-          <Route path="/mensajeria/:idUsuario">
-            <Mensajeria />
+          <Route path="/mensajes/:idConversacion">
+            <VerMensajes />
+          </Route>
+          <Route path="/bandejaSalida/:idUsuario">
+            <BandejaSalida />
+          </Route>
+          <Route path="/bandejaEntrada/:idUsuario">
+            <BandejaEntrada />
           </Route>
           <Route path="/users">
             <UsuarioID />
