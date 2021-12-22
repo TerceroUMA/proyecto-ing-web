@@ -88,6 +88,14 @@ export default function Navbar() {
                   </li>
 
                   <li className="nav-item">
+                    <Link to={`/BandejaEntrada/${uuid}`}
+                      className="nav-link"
+                    >
+                      Mensajeria
+                    </Link>
+                  </li>
+
+                  <li className="nav-item">
                     <Link to="/registrarse"
                       className="nav-link"
                       onClick={ logout }

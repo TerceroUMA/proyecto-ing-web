@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from django.views import View
 from django.http import QueryDict
 from django.http.response import JsonResponse
@@ -23,40 +23,42 @@ class Conversacion(View):
         uuid = request.GET.get("uuid")
 
         if(uuid == None):
-            data = QueryDict(request.body)
-            us = {'uuid': data["usuario"]}
-            contador = 0
-            encontrado = False
 
-            while(not encontrado and contador < len(data)):
-                encontrado = self.comprobarCaracteres(
-                    list(data.values())[contador])
+            id = request.GET.get("idUsuario")
+            us = self.usuarios.find_one({"uuid": id}, {"_id": 0})
 
-                contador = contador + 1
+            if(us == None):
+                return JsonResponse({"ok": False, "msg": "No existe ningun usuario con este id"}, safe=False)
 
-            if(encontrado):
-                return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
+            lista = list(self.conversaciones.find(
+                {"receptor": us["correo"]}, {"_id": 0}))
+            res = list(self.conversaciones.find(
+                {"receptor": us["correo"]}, {"_id": 0}))
+            visto = request.GET.get("visto")
+            fecha = request.GET.get("fecha")
+            correo = request.GET.get("correo")
 
-            lista = []
-            if(data["visto"] == None and data["fecha"] == None and data["correo"] == None):
-                lista = list(self.conversaciones.find(
-                    {"receptor": us["correo"]}, {"_id": 0}))
-
+            if((visto == None or visto == "") and (fecha == None or fecha == "") and (correo == None or correo == "")):
                 return JsonResponse({"ok": True, "conversaciones": lista})
+
             else:
 
-                if (data["visto"] != None):
-                    lista = lista + \
-                        list(self.conversaciones.find(
-                            {"visto": 0}, {"_id": 0}))
-                if (data["fecha"] != None):
-                    lista = lista + \
-                        list(self.conversaciones.find(
-                            {"fecha": data["fecha"]}, {"_id": 0}))
-                if (data["correo"] != None):
-                    lista = lista + \
-                        list(self.conversaciones.find(
-                            {"emisor": data["correo"]}, {"_id": 0}))
+                if (visto != None and visto != ""):
+                    for c in res:
+                        if c["visto"] == 1:
+                            lista.remove(c)
+
+                if (fecha != None and fecha != ""):
+                    fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
+                    for c in res:
+                        if c["fecha"] < fecha_dt:
+                            lista.remove(c)
+
+                if (correo != None and correo != ""):
+                    for c in res:
+                        if not correo in c["emisor"]:
+                            lista.remove(c)
+
                 return JsonResponse({"ok": True, "conversaciones": lista})
         else:
             conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
@@ -72,6 +74,7 @@ class Conversacion(View):
         if(conv == None):
             return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
         else:
+            self.conversaciones.delete_one(conv)
             return JsonResponse({"ok": True, "msg": "Conversacion eliminada"}, safe=False)
 
     def comprobarCaracteres(self, dato):
@@ -82,6 +85,12 @@ class Conversacion(View):
 
     def post(self, request):
         data = QueryDict(request.body)
+
+        id = request.GET.get("idUsuario")
+        us = self.usuarios.find_one({"uuid": id}, {"_id": 0})
+        if(us == None):
+            return JsonResponse({"ok": False, "msg": "No existe ningun usuario con este id"}, safe=False)
+
         contador = 0
         encontrado = False
 
@@ -92,18 +101,18 @@ class Conversacion(View):
             contador = contador + 1
 
         if(encontrado):
-            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
+            return JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
 
-        if(self.usuarios.find_one({"correo": data["receptor"]}, {"_id": 0}) == None):
-            return False, JsonResponse({"ok": False, "msg": "No existe este destinatario"}, safe=False)
-
+        if(self.usuarios.find_one({"correo": data["destinatario"]}, {"_id": 0}) == None):
+            return JsonResponse({"ok": False, "msg": "No existe este destinatario"}, safe=False)
+            
         newValues = {
             "uuid": str(uuid.uuid1()),
-            "receptor": data["receptor"],
-            "emisor": data["usuario"],
+            "receptor": data["destinatario"],
+            "emisor": us["correo"],
             "asunto": data["asunto"],
             "texto": data["texto"],
-            "fecha": datetime.now,
+            "fecha": datetime.now(),
             "visto": 0
         }
 
@@ -147,35 +156,43 @@ class MisMensajes(View):
         uuid = request.GET.get("uuid")
 
         if(uuid == None):
-            data = QueryDict(request.body)
-            us = {'uuid': data["usuario"]}
-            contador = 0
-            encontrado = False
 
-            while(not encontrado and contador < len(data)):
-                encontrado = self.comprobarCaracteres(
-                    list(data.values())[contador])
+            id = request.GET.get("idUsuario")
+            us = self.usuarios.find_one({"uuid": id}, {"_id": 0})
 
-                contador = contador + 1
+            if(us == None):
+                return JsonResponse({"ok": False, "msg": "No existe ningun usuario con este id"}, safe=False)
 
-            if(encontrado):
-                return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
+            lista = list(self.conversaciones.find(
+                {"emisor": us["correo"]}, {"_id": 0}))
+            res = list(self.conversaciones.find(
+                {"receptor": us["correo"]}, {"_id": 0}))
 
-            lista = []
-            if(data["visto"] == None and data["fecha"] == None and data["correo"] == None):
-                lista = list(self.conversaciones.find(
-                    {"emisor": us["correo"]}, {"_id": 0}))
+            visto = request.GET.get("visto")
+            fecha = request.GET.get("fecha")
+            correo = request.GET.get("correo")
 
+            if((visto == None or visto == "") and (fecha == None or fecha == "") and (correo == None or correo == "")):
                 return JsonResponse({"ok": True, "conversaciones": lista})
+
             else:
-                if (data["fecha"] != None):
-                    lista = lista + \
-                        list(self.conversaciones.find(
-                            {"fecha": data["fecha"]}, {"_id": 0}))
-                if (data["correo"] != None):
-                    lista = lista + \
-                        list(self.conversaciones.find(
-                            {"receptor": data["correo"]}, {"_id": 0}))
+                res = lista
+                if (visto != None and visto != ""):
+                    for c in res:
+                        if c["visto"] == 1:
+                            lista.remove(c)
+
+                if (fecha != None and fecha != ""):
+                    fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
+                    for c in res:
+                        if c["fecha"] < fecha_dt:
+                            lista.remove(c)
+
+                if (correo != None and correo != ""):
+                    for c in res:
+                        if not correo in c["receptor"]:
+                            lista.remove(c)
+
                 return JsonResponse({"ok": True, "conversaciones": lista})
         else:
             conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
@@ -184,42 +201,8 @@ class MisMensajes(View):
             else:
                 return JsonResponse({"ok": True, "conversacion": conv})
 
-    def post(self, request):
-        uuid = request.GET.get("uuid")
-
-        conv = self.conversaciones.find_one({"uuid": uuid}, {"_id": 0})
-
-        if(conv == None):
-            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
-
-        data = QueryDict(request.body)
-        contador = 0
-        encontrado = False
-
-        while(not encontrado and contador < len(data)):
-            encontrado = self.comprobarCaracteres(
-                list(data.values())[contador])
-
-            contador = contador + 1
-
-        if(encontrado):
-            return False, JsonResponse({"ok": False, "msg": "No se pueden usar caracteres no válidos"}, safe=False)
-
-        newValues = {
-            "uuid": str(uuid.uuid1()),
-            "emisor": data["usuario"],
-            "receptor": conv["emisor"],
-            "asunto": "Re: " + conv["asunto"],
-            "texto": data["texto"],
-            "fecha": datetime.now(),
-            "visto": 0
-        }
-
-        self.conversaciones.insert_one(newValues)
-        conv = self.conversaciones.find_one(
-            {"uuid": newValues["uuid"]}, {"_id": 0})
-
-        if(conv == None):
-            return JsonResponse({"ok": False, "msg": "No existe ninguna conversacion con este id"}, safe=False)
+    def comprobarCaracteres(self, dato):
+        if(dato.find("'") >= 0 or dato.find('"') >= 0 or dato.find("{") >= 0 or dato.find("}") >= 0 or dato.find("$") >= 0):
+            return True
         else:
-            return JsonResponse({"ok": True, "conversacion": conv}, safe=False)
+            return False

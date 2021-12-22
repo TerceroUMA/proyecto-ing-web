@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchUrlencoded } from '../helpers/fetch';
 import moment from 'moment';
@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import Routing from './Rotuing';
 
 import '../styles/pages/trayectoId.css';
+
 
 export default function TrayectoID() {
 
@@ -25,12 +26,46 @@ export default function TrayectoID() {
   const [longitudOrigen, setLongitudOrigen] = useState( 0 );
   const [latitudDestino, setLatitudDestino] = useState( 0 );
   const [longitudDestino, setLongitudDestino] = useState( 0 );
+  const [cont, setCont] = useState( 0 );
+  const paypal = useRef();
 
   const [tweetValue, handleChange] = useForm({
     tweetText: ''
   });
 
   const tweetText = tweetValue.tweetText;
+
+  /*   useEffect( () => {
+
+    if ( cont <= 0 ) {
+
+      window.paypal.Buttons({
+        createOrder: ( data, actions, err ) => {
+
+          return actions.order.create({
+            intent: 'CAPTURE',
+            purchase_units: [{
+              description: 'Comprar trayecto',
+              amount: {
+                currency_code: 'EUR',
+                value: 0.01
+              }
+            }]
+          });
+
+        },
+        onApprove: async ( data, actions ) => {
+
+          const order = await actions.order.capture();
+          console.log( order );
+
+        },
+        onError: err => ( console.log( err ) )
+      }).render( paypal.current );
+
+    }
+
+  }); */
 
   useEffect( async () => {
 
@@ -40,7 +75,6 @@ export default function TrayectoID() {
       const body = await respuesta.json();
       setHayDatos( true );
 
-      console.log( body );
 
       if ( body.ok ) {
 
@@ -51,7 +85,6 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
-            console.log( 'origen: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudOrigen( lat );
             setLongitudOrigen( lng );
@@ -62,7 +95,6 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
-            console.log( 'destino: ', data );
             const { lat, lng } = data.results[0].geometry.location;
             setLatitudDestino( lat );
             setLongitudDestino( lng );
@@ -91,7 +123,7 @@ export default function TrayectoID() {
 
   const handleInscribrise = async() => {
 
-    const respuesta = await fetchUrlencoded( 'trayectos/inscribir', { uuid: idTrayecto, idUsuario: uuid }, 'POST' );
+    /* const respuesta = await fetchUrlencoded( 'trayectos/inscribir', { uuid: idTrayecto, idUsuario: uuid }, 'POST' );
     const body = await respuesta.json();
 
     if ( !body.ok ) {
@@ -100,7 +132,8 @@ export default function TrayectoID() {
 
     }
 
-    history.push( '/trayectosInscritos' );
+    history.push( '/trayectosInscritos' ); */
+
 
   };
 
@@ -256,6 +289,11 @@ export default function TrayectoID() {
           </div>
           : <></>
       }
+      <div>
+        <div ref={paypal}>
+
+        </div>
+      </div>
     </div>
   );
 
