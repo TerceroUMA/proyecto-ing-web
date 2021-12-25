@@ -27,6 +27,7 @@ export default function MyRouting({ L1, L2, L3, L4 }) {
             height: 800,
             function() {
 
+              // eslint-disable-next-line no-undef
               ( bindPopup( myPopup ).openOn( map ) );
 
             }

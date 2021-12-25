@@ -1,0 +1,77 @@
+.twitter-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.twitter-container > div {
+  width: 500px;
+  height: 400px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(180deg, #2085c1 -40%, #009ffd 105%);
+  color: white;
+}
+
+.twitter-container textarea {
+  width: 400px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  height: 200px;
+}
+
+.twitter-container h3 {
+  margin-top: 20px;
+  font-size: 30px;
+}
+
+textarea:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+  transform: scale(1.05);
+}
+
+.disabled {
+  color: white;
+}
+
+.datos-container {
+  width: 300px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.datos-container button {
+  margin-left: 30px;
+  color: white;
+  border-color: white;
+}
+
+.datos-container p {
+  padding: 0;
+  margin: 0;
+}
+
+.trayecto-id-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .trayecto-id-container {
+    flex-direction: row;
+  }
+}
+

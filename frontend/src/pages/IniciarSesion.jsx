@@ -40,7 +40,7 @@ const IniciarSesion = () => {
   }
 
   return (
-    <div className="auth__container">
+    <div className="auth__container login">
       <h1 className="auth__title">
         Iniciar sesión
       </h1>
