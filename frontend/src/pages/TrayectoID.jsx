@@ -81,13 +81,22 @@ export default function TrayectoID() {
         setTrayecto( body.trayecto );
         setPasajeros( body.trayecto.pasajeros );
 
+
         fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.origen}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
           .then( res => res.json() )
           .then( data => {
 
-            const { lat, lng } = data.results[0].geometry.location;
-            setLatitudOrigen( lat );
-            setLongitudOrigen( lng );
+            try {
+
+              const { lat, lng } = data.results[0].geometry.location;
+              setLatitudOrigen( lat );
+              setLongitudOrigen( lng );
+
+            } catch ( error ) {
+
+              console.log( error );
+
+            }
 
           });
 
@@ -95,11 +104,20 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
-            const { lat, lng } = data.results[0].geometry.location;
-            setLatitudDestino( lat );
-            setLongitudDestino( lng );
+            try {
+
+              const { lat, lng } = data.results[0].geometry.location;
+              setLatitudDestino( lat );
+              setLongitudDestino( lng );
+
+            } catch ( error ) {
+
+              console.log( error );
+
+            }
 
           });
+
 
       } else {
 
