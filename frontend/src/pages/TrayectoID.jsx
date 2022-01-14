@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchUrlencoded } from '../helpers/fetch';
 import moment from 'moment';
@@ -26,8 +26,6 @@ export default function TrayectoID() {
   const [longitudOrigen, setLongitudOrigen] = useState( 0 );
   const [latitudDestino, setLatitudDestino] = useState( 0 );
   const [longitudDestino, setLongitudDestino] = useState( 0 );
-  const [cont, setCont] = useState( 0 );
-  const paypal = useRef();
 
   const [tweetValue, handleChange] = useForm({
     tweetText: ''
@@ -307,11 +305,6 @@ export default function TrayectoID() {
           </div>
           : <></>
       }
-      <div>
-        <div ref={paypal}>
-
-        </div>
-      </div>
     </div>
   );
 
