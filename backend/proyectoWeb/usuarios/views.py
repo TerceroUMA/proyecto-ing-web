@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 from django.views import View
-from django.http import QueryDict
+from django.http import QueryDict, HttpResponse
 from django.http.response import JsonResponse
 from pymongo import MongoClient
 import certifi
@@ -12,8 +12,31 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 
 # Create your views here.
+
+class OAuth2(View):
+
+    def post(request):
+
+        token = request.POST.get("token")
+
+        try:
+
+            idinfo = id_token.verify_oauth2_token(token, requests.Request(
+            ), "212729155817-dc32jv3rj9goboktv71fbbjo4hggsnfa.apps.googleusercontent.com")
+
+            userid = idinfo['sub']
+
+            return JsonResponse({"ok": True, "idUsuario": userid}, safe=False)
+
+        except ValueError:
+            # Invalid token
+            return JsonResponse({"ok": False, "msg": "Token inválido"}, safe=False)
+
 
 class Login(View):
 
