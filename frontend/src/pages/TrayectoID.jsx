@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchUrlencoded } from '../helpers/fetch';
 import moment from 'moment';
@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import Routing from './Rotuing';
 
 import '../styles/pages/trayectoId.css';
+
 
 export default function TrayectoID() {
 
@@ -25,12 +26,46 @@ export default function TrayectoID() {
   const [longitudOrigen, setLongitudOrigen] = useState( 0 );
   const [latitudDestino, setLatitudDestino] = useState( 0 );
   const [longitudDestino, setLongitudDestino] = useState( 0 );
+  const [cont, setCont] = useState( 0 );
+  const paypal = useRef();
 
   const [tweetValue, handleChange] = useForm({
     tweetText: ''
   });
 
   const tweetText = tweetValue.tweetText;
+
+  /*   useEffect( () => {
+
+    if ( cont <= 0 ) {
+
+      window.paypal.Buttons({
+        createOrder: ( data, actions, err ) => {
+
+          return actions.order.create({
+            intent: 'CAPTURE',
+            purchase_units: [{
+              description: 'Comprar trayecto',
+              amount: {
+                currency_code: 'EUR',
+                value: 0.01
+              }
+            }]
+          });
+
+        },
+        onApprove: async ( data, actions ) => {
+
+          const order = await actions.order.capture();
+          console.log( order );
+
+        },
+        onError: err => ( console.log( err ) )
+      }).render( paypal.current );
+
+    }
+
+  }); */
 
   useEffect( async () => {
 
@@ -40,21 +75,28 @@ export default function TrayectoID() {
       const body = await respuesta.json();
       setHayDatos( true );
 
-      console.log( body );
 
       if ( body.ok ) {
 
         setTrayecto( body.trayecto );
         setPasajeros( body.trayecto.pasajeros );
 
+
         fetch( `https://maps.googleapis.com/maps/api/geocode/json?address=${body.trayecto.origen}&key=${process.env.REACT_APP_API_KEY_GOOGLE}` )
           .then( res => res.json() )
           .then( data => {
 
-            console.log( 'origen: ', data );
-            const { lat, lng } = data.results[0].geometry.location;
-            setLatitudOrigen( lat );
-            setLongitudOrigen( lng );
+            try {
+
+              const { lat, lng } = data.results[0].geometry.location;
+              setLatitudOrigen( lat );
+              setLongitudOrigen( lng );
+
+            } catch ( error ) {
+
+              console.log( error );
+
+            }
 
           });
 
@@ -62,12 +104,20 @@ export default function TrayectoID() {
           .then( res => res.json() )
           .then( data => {
 
-            console.log( 'destino: ', data );
-            const { lat, lng } = data.results[0].geometry.location;
-            setLatitudDestino( lat );
-            setLongitudDestino( lng );
+            try {
+
+              const { lat, lng } = data.results[0].geometry.location;
+              setLatitudDestino( lat );
+              setLongitudDestino( lng );
+
+            } catch ( error ) {
+
+              console.log( error );
+
+            }
 
           });
+
 
       } else {
 
@@ -91,7 +141,7 @@ export default function TrayectoID() {
 
   const handleInscribrise = async() => {
 
-    const respuesta = await fetchUrlencoded( 'trayectos/inscribir', { uuid: idTrayecto, idUsuario: uuid }, 'POST' );
+    /* const respuesta = await fetchUrlencoded( 'trayectos/inscribir', { uuid: idTrayecto, idUsuario: uuid }, 'POST' );
     const body = await respuesta.json();
 
     if ( !body.ok ) {
@@ -100,7 +150,8 @@ export default function TrayectoID() {
 
     }
 
-    history.push( '/trayectosInscritos' );
+    history.push( '/trayectosInscritos' ); */
+
 
   };
 
@@ -135,7 +186,7 @@ export default function TrayectoID() {
 
   }
 
-  const baseUrlTweet = 'www.youtube.com';
+  const baseUrlTweet = 'https://blabla-car.herokuapp.com/';
 
   return (
     <div>
@@ -216,7 +267,7 @@ export default function TrayectoID() {
             <div className="datos-container">
               <p className="disabled">{317 - tweetText.length - baseUrlTweet.length - window.location.pathname.length}</p>
               <a
-                href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${baseUrlTweet}${window.location.pathname}`}
+                href={`https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=${tweetText}&url=${window.location.href}`}
                 target={'_blank'} rel="canonical noreferrer"
               >
                 <button className="btn btn-outline-primary">
@@ -231,7 +282,7 @@ export default function TrayectoID() {
 
       {
 
-        longitudOrigen !== 0
+        longitudOrigen !== 0 && longitudDestino !== 0
 
           ? <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 50 + 'px', marginTop: 50 + 'px' }}>
 
@@ -256,6 +307,11 @@ export default function TrayectoID() {
           </div>
           : <></>
       }
+      <div>
+        <div ref={paypal}>
+
+        </div>
+      </div>
     </div>
   );
 
