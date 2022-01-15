@@ -6,6 +6,8 @@ import { useDropzone } from 'react-dropzone';
 import { crearTrayecto } from '../actions/trayectos';
 import Swal from 'sweetalert2';
 
+import '../styles/pages/auth.css';
+
 const CrearTrayecto = () => {
 
   const history = useHistory();
@@ -64,18 +66,18 @@ const CrearTrayecto = () => {
   };
 
   return (
-    <div className="authcontainer">
+    <div className="auth__container">
       <form
-        className="authform"
+        className="auth__form"
         onSubmit={handleOnSubmit}
       >
         <h1 className="auth__title">
         Crear Nuevo Trayecto
         </h1>
-        {/ Se podría añadir */}
+        {/* Se podría añadir */}
         {/* <p style={{ alignSelf: 'flex-start', margin: 0 }}>Nombre de usuario: </p> */}
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="text"
           name="origen"
           value={origen}
@@ -83,7 +85,7 @@ const CrearTrayecto = () => {
           placeholder="Origen del trayecto"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="text"
           name="destino"
           value={destino}
@@ -91,7 +93,7 @@ const CrearTrayecto = () => {
           placeholder="Destino del trayecto"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="text"
           name="tipoDeVehiculo"
           value={tipoDeVehiculo}
@@ -99,7 +101,7 @@ const CrearTrayecto = () => {
           placeholder="Marca y modelo del vehículo"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="number"
           name="duracion"
           value={duracion}
@@ -107,7 +109,7 @@ const CrearTrayecto = () => {
           placeholder="Duración aprox. en min"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="number"
           name="precio"
           value={precio}
@@ -116,7 +118,7 @@ const CrearTrayecto = () => {
           autoComplete="off"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="number"
           name="plazasDisponibles"
           value={plazasDisponibles}
@@ -124,7 +126,7 @@ const CrearTrayecto = () => {
           placeholder="Plazas disponibles para el trayecto"
         />
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="date"
           name="fechaDeSalida"
           value={fechaDeSalida}
@@ -133,7 +135,7 @@ const CrearTrayecto = () => {
         />
 
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="time"
           name="horaDeSalida"
           value={horaDeSalida}
@@ -142,7 +144,7 @@ const CrearTrayecto = () => {
         />
 
         <input
-          className="sigInoption form-control"
+          className="sigIn__option form-control"
           type="number"
           name="periodicidad"
           value={periodicidad}
