@@ -19,8 +19,15 @@ from google.auth.transport import requests
 # Create your views here.
 
 class OAuth2(View):
+    
+    def __init__(self):
+        client = MongoClient(
+            'mongodb+srv://root:root@bdingweb.5axsz.mongodb.net/', tlsCAFile=certifi.where())
 
-    def post(request):
+        db = client['IngWeb']
+        self.users = db.users
+
+    def post(self, request):
 
         token = request.POST.get("token")
 
@@ -29,9 +36,15 @@ class OAuth2(View):
             idinfo = id_token.verify_oauth2_token(token, requests.Request(
             ), "212729155817-dc32jv3rj9goboktv71fbbjo4hggsnfa.apps.googleusercontent.com")
 
-            userid = idinfo['sub']
+            email = idinfo['email']
+            
+            us = self.users.find_one({"correo": email})
 
-            return JsonResponse({"ok": True, "idUsuario": userid}, safe=False)
+            if (us == None):
+                return JsonResponse({"ok": False, "msg": 'No se encuentra a ningún usuario con el correo introducido', 'email': email, 'name': idinfo["name"], 'picture': idinfo["picture"]}, safe=False)
+
+            else:
+                return JsonResponse({"ok": True, "usuario": us}, safe=False)
 
         except ValueError:
             # Invalid token
