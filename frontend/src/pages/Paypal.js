@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// eslint-disable-next-line no-undef
 const PayPalButton = paypal.Buttons.driver( 'react', { React, ReactDOM });
 
 export default function Paypal() {
