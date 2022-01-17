@@ -3,6 +3,7 @@ import '../styles/pages/auth.css';
 
 import { useForm } from '../hooks/useForm';
 import { useHistory } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { registrarse } from '../actions/auth';
 import { useDropzone } from 'react-dropzone';
@@ -12,11 +13,13 @@ const Registrarse = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
+  const [oauth, setOauth] = useState( location.state !== undefined );
 
   const [formValues, handleInputChange] = useForm({
-    nombre: '',
-    apellidos: '',
-    correo: '',
+    nombre: oauth ? location.state.nombre : '',
+    apellidos: oauth ? location.state.apellido : '',
+    correo: oauth ? location.state.email : '',
     password: '',
     confirmarPassword: '',
     edad: '',
@@ -25,6 +28,7 @@ const Registrarse = () => {
   });
 
   const { nombre, apellidos, correo, password, confirmarPassword, telefono, edad, localidad } = formValues;
+  console.log( formValues );
 
   const [file, setFile] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -86,73 +90,78 @@ const Registrarse = () => {
           className="auth__form"
           onSubmit={ handleOnSubmit }
         >
-          <input
-            className="sigIn__option form-control"
-            type="text"
-            name="nombre"
-            value={ nombre }
-            onChange={ handleInputChange}
-            placeholder="Nombre de usuario"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="text"
-            name="apellidos"
-            value={ apellidos }
-            onChange={ handleInputChange}
-            placeholder="Apellidos"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="email"
-            name="correo"
-            value={ correo }
-            onChange={ handleInputChange}
-            placeholder="Correo electrónico"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="password"
-            name="password"
-            value={ password }
-            onChange={ handleInputChange}
-            placeholder="Contraseña"
-            autoComplete="off"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="password"
-            name="confirmarPassword"
-            value={ confirmarPassword }
-            onChange={ handleInputChange}
-            placeholder="Confirmar contraseña"
-            autoComplete="off"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="number"
-            name="telefono"
-            value={ telefono }
-            onChange={ handleInputChange}
-            placeholder="Telefono"
-          />
-          <input
-            className="sigIn__option form-control"
-            type="number"
-            name="edad"
-            value={ edad }
-            onChange={ handleInputChange}
-            placeholder="Edad"
-          />
+          <fieldset>
+            <input
+              className="sigIn__option form-control"
+              type="text"
+              name="nombre"
+              value={ nombre }
+              onChange={ handleInputChange}
+              placeholder="Nombre de usuario"
+              disabled={oauth}
+            />
+            <input
+              className="sigIn__option form-control"
+              type="text"
+              name="apellidos"
+              value={ apellidos }
+              onChange={ handleInputChange}
+              placeholder="Apellidos"
+              disabled={oauth}
+            />
+            <input
+              className="sigIn__option form-control"
+              type="email"
+              name="correo"
+              value={ correo }
+              onChange={ handleInputChange}
+              placeholder="Correo electrónico"
+              disabled={oauth}
+            />
+            <input
+              className="sigIn__option form-control"
+              type="password"
+              name="password"
+              value={ password }
+              onChange={ handleInputChange}
+              placeholder="Contraseña"
+              autoComplete="off"
+            />
+            <input
+              className="sigIn__option form-control"
+              type="password"
+              name="confirmarPassword"
+              value={ confirmarPassword }
+              onChange={ handleInputChange}
+              placeholder="Confirmar contraseña"
+              autoComplete="off"
+            />
+            <input
+              className="sigIn__option form-control"
+              type="number"
+              name="telefono"
+              value={ telefono }
+              onChange={ handleInputChange}
+              placeholder="Telefono"
+            />
+            <input
+              className="sigIn__option form-control"
+              type="number"
+              name="edad"
+              value={ edad }
+              onChange={ handleInputChange}
+              placeholder="Edad"
+            />
 
-          <input
-            className="sigIn__option form-control"
-            type="text"
-            name="localidad"
-            value={ localidad }
-            onChange={ handleInputChange}
-            placeholder="Ciudad donde vive"
-          />
+            <input
+              className="sigIn__option form-control"
+              type="text"
+              name="localidad"
+              value={ localidad }
+              onChange={ handleInputChange}
+              placeholder="Ciudad donde vive"
+            />
+          </fieldset>
 
 
           <p style={{ wordWrap: 'break-word' }}>¿Ya tienes una cuenta? <a href="#"

@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import { fetchFormData, fetchUrlencoded } from '../helpers/fetch';
 import { types } from '../types/types';
 
-const login = ( user ) => ({
+export const login = ( user ) => ({
   type: types.login,
   payload: user
 });
